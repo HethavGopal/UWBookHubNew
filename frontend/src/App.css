@@ -1,0 +1,62 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swiper-button-prev {
+  display: none !important;
+}
+
+.swiper-button-next {
+  background-color: #ffffff;
+  padding: 1.25rem; /* p-5 converted to rem */
+  border-radius: 9999px; /* rounded-full */
+  z-index: 50;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /* shadow-md */
+}
+
+.swiper-button-prev:after,
+.swiper-button-next:after {
+  font-size: 16px !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color); /* Replace with your primary color */
+  padding: 0.5rem 3rem; /* py-2 px-12 */
+  border-radius: 0.375rem; /* rounded-md */
+  font-size: 1rem; /* text-base */
+  font-family: var(
+    --font-secondary
+  ); /* font-secondary - replace with your secondary font */
+  font-weight: 700; /* font-bold */
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: 200ms;
+}
+
+.btn-primary:hover {
+  background-color: var(
+    --secondary-color
+  ); /* Replace with your secondary color */
+  color: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
