@@ -16,9 +16,7 @@ const BookDetails = () => {
       })
   }, [id])
 
-  if (!book) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
-  }
+  
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-8">

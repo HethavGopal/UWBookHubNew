@@ -24,19 +24,19 @@ const TopSellers = () => {
   const filteredBooks = selectedCategory === "Choose a genre" ? books : books.filter(book => book.category === selectedCategory.toLowerCase())
 
   return (
-    <div className='max-w-screen-2xl mx-auto px-4 py-12'>
-      <div className="mb-8">
-        <span className="text-[#FF3811] font-bold block mb-2">Available Books</span>
-        <h2 className="text-4xl font-bold text-gray-800">Top Sellers</h2>
+    <div className='max-w-screen-2xl mx-auto px-4 py-6'>
+      <div className="mb-4">
+        <span className="text-[#FF3811] font-bold block mb-1 text-xs">Available Books</span>
+        <h2 className="text-xl font-bold text-gray-800">Latest Books</h2>
       </div>
       
       {/* Category Filter */}
-      <div className='mb-12'>
+      <div className='mb-6'>
         <select 
           onChange={(e) => setSelectedCategory(e.target.value)} 
           name="category" 
           id="category" 
-          className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF3811] bg-white text-gray-700 cursor-pointer hover:border-[#FF3811] transition-colors"
+          className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF3811] bg-white text-gray-700 cursor-pointer hover:border-[#FF3811] transition-colors"
         >
           {categories.map((category, index) => (
             <option key={index} value={category}>{category}</option>
@@ -45,7 +45,7 @@ const TopSellers = () => {
       </div>
 
       {/* Books Swiper */}
-      <div className="relative [&_.swiper-button-next]:text-[#FF3811] [&_.swiper-button-prev]:text-[#FF3811] [&_.swiper-button-next]:scale-75 [&_.swiper-button-prev]:scale-75 [&_.swiper-button-next]:right-1 [&_.swiper-button-prev]:left-1">
+      <div className="relative [&_.swiper-button-next]:text-[#FF3811] [&_.swiper-button-prev]:text-[#FF3811] [&_.swiper-button-next]:scale-75 [&_.swiper-button-prev]:scale-75 [&_.swiper-button-next]:right-0 [&_.swiper-button-prev]:left-4">
         <Swiper
           slidesPerView={1}
           spaceBetween={30}
@@ -68,7 +68,7 @@ const TopSellers = () => {
           className="mySwiper"
         >
           {filteredBooks.length > 0 && filteredBooks.map((book, index) => (
-            <SwiperSlide key={index} className="pb-12">
+            <SwiperSlide key={index} className="pb-8">
               <BookCard book={book} />
             </SwiperSlide>
           ))}
