@@ -17,7 +17,7 @@ const navigation = [
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const currentUser = true;
+  const currentUser = false;
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -80,9 +80,20 @@ const NavBar = () => {
                   )}
                 </>
               ) : (
-                <Link to="/login" className="text-dark-red hover:text-red-light">
-                  <FiUser className="size-6" />
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link 
+                    to="/login" 
+                    className="px-4 py-2 text-sm font-semibold text-red-900 hover:text-red-800 border border-red-900 rounded-lg hover:bg-red-50 transition-all duration-200"
+                  >
+                    Login
+                  </Link>
+                  <Link 
+                    to="/register" 
+                    className="px-4 py-2 text-sm font-semibold text-white bg-red-900 hover:bg-red-800 rounded-lg transition-all duration-200"
+                  >
+                    Register
+                  </Link>
+                </div>
               )}
             </div>
 

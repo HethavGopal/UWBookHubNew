@@ -26,7 +26,7 @@ const TopSellers = () => {
   return (
     <div className='max-w-screen-2xl mx-auto px-4 py-6'>
       <div className="mb-4">
-        <span className="text-[#FF3811] font-bold block mb-1 text-xs">Available Books</span>
+        <span className="text-red-900 font-bold block mb-1 text-xs">Available Books</span>
         <h2 className="text-xl font-bold text-gray-800">Latest Books</h2>
       </div>
       
@@ -36,7 +36,7 @@ const TopSellers = () => {
           onChange={(e) => setSelectedCategory(e.target.value)} 
           name="category" 
           id="category" 
-          className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF3811] bg-white text-gray-700 cursor-pointer hover:border-[#FF3811] transition-colors"
+          className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900 bg-white text-gray-700 cursor-pointer hover:border-red-900 transition-colors"
         >
           {categories.map((category, index) => (
             <option key={index} value={category}>{category}</option>
@@ -45,7 +45,7 @@ const TopSellers = () => {
       </div>
 
       {/* Books Swiper */}
-      <div className="relative [&_.swiper-button-next]:text-[#FF3811] [&_.swiper-button-prev]:text-[#FF3811] [&_.swiper-button-next]:scale-75 [&_.swiper-button-prev]:scale-75 [&_.swiper-button-next]:right-0 [&_.swiper-button-prev]:left-4">
+      <div className="relative [&_.swiper-button-next]:text-red-900 [&_.swiper-button-prev]:text-red-900 [&_.swiper-button-next]:scale-75 [&_.swiper-button-prev]:scale-75 [&_.swiper-button-next]:right-0 [&_.swiper-button-prev]:left-4">
         <Swiper
           slidesPerView={1}
           spaceBetween={30}
