@@ -7,6 +7,7 @@ import { IoMdHeartEmpty } from "react-icons/io";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import avatarImg from '../assets/avatar.svg';
 import wbhLogo from '../assets/WBH2.svg';
+import { useSelector } from 'react-redux';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -17,6 +18,10 @@ const navigation = [
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const cartItems = useSelector((state) => state.cart.cartItems)
+  
+
+  
   const currentUser = false;
 
   return (
@@ -106,7 +111,11 @@ const NavBar = () => {
               className="bg-light-yellow text-black px-4 py-2 flex items-center gap-2 rounded-lg hover:bg-yellow-light transition-colors"
             >
               <AiOutlineShoppingCart className="size-5" />
-              <span className="text-sm font-medium">0</span>
+              {
+                cartItems.length > 0 ? 
+                  <span className="text-sm font-semibold sm:ml-1">{cartItems.length}</span> :
+                  <span className="text-sm font-semibold sm:ml-1">0</span>
+              }
             </Link>
           </div>
         </div>
