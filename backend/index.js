@@ -14,26 +14,29 @@ app.use(cors({
 }));
   
 // Import Statments for controller
-
 const bookRoute = require('./src/book/book.route');
-
 
 // Routes
 app.use("/api/books", bookRoute);
 
+// Root route - only matches exact '/' path
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
-
-
+// Database connection and server start
 async function main() {
-  await mongoose.connect(process.env.DB_URL);
-  app.use('/', (req, res) => {
-    res.send('Hello World!');
-  });
+  try {
+    await mongoose.connect(process.env.DB_URL);
+    console.log("Database connected successfully");
+    
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (error) {
+    console.log("Database connection error:", error);
+    process.exit(1);
+  }
 }
 
-main().then(() => console.log("Working")).catch(err => console.log(err));
-
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+main().catch(err => console.log(err));
