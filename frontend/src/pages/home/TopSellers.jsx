@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import BookCard from '../books/BookCard'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,19 +9,26 @@ import 'swiper/css/pagination';
 
 // import required modules
 import { Pagination, Navigation } from 'swiper/modules';
+import { useFetchAllBooksQuery } from '../../redux/features/cart/booksAPI';
 
 const TopSellers = () => {
-  const [books, setBooks] = useState([])
   const [selectedCategory, setSelectedCategory] = useState("Choose a genre")
-
-  useEffect(() => {
-    fetch("books.json")
-      .then(res => res.json())
-      .then(data => setBooks(data))
-  }, [])
+  const { data: books = [], isLoading, error } = useFetchAllBooksQuery()
+  
+ 
 
   const categories = ["Choose a genre", "Business", "Mathematics", "History", "Science", "Computer Science"]
-  const filteredBooks = selectedCategory === "Choose a genre" ? books : books.filter(book => book.category === selectedCategory.toLowerCase())
+  const filteredBooks = selectedCategory === "Choose a genre" 
+    ? books 
+    : books.filter(book => book?.category?.toLowerCase() === selectedCategory.toLowerCase())
+
+  if (isLoading) {
+    return <div className="text-center py-10">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="text-center py-10 text-red-600">Error loading books: {error.message}</div>
+  }
 
   return (
     <div className='max-w-screen-2xl mx-auto px-4 py-6'>
