@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 
+
 const Register = () => {
     const [message, setMessage] = useState('');
     const {
@@ -24,6 +25,7 @@ const Register = () => {
 
         } catch (error) {
             setMessage("Please provide a valid email and password");
+            console.log(error);
         }
     }
 
