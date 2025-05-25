@@ -3,14 +3,15 @@ import { useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'        
+import { useAuth } from '../../context/AuthContext'
 
 const CheckutPage = () => {
     const cartItems = useSelector((state) => state.cart.cartItems);
     const totalPrice = cartItems.reduce((acc, item) => acc + item.newPrice, 0).toFixed(2);
-    const currentUser = true; // TODO: get current user from firebase
+    const {currentUser} = useAuth();
 
     const {
-        register,
+        register, 
         handleSubmit,
         formState: { errors, isValid },
     } = useForm({
@@ -24,7 +25,7 @@ const CheckutPage = () => {
 
     const onSubmit = (data) => {
         console.log(data)
-        const newOrder = {
+        const newOrder  = {
             name: data.name,
             enamil: currentUser?.email,
             address: {

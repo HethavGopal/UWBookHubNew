@@ -15,9 +15,10 @@ app.use(cors({
   
 // Import Statments for controller
 const bookRoute = require('./src/book/book.route');
-
+const userRoute = require('./src/users/user.route');
 // Routes
 app.use("/api/books", bookRoute);
+app.use("/api/auth", userRoute);
 
 // Root route - only matches exact '/' path
 app.get('/', (req, res) => {
