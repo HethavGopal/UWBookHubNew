@@ -16,7 +16,7 @@ const Login = () => {
         formState: { errors },
     } = useForm();
 
-    const {loginUser} = useAuth();
+    const {loginUser, googleSignIn} = useAuth();
     const onSubmit = async (data) => {
         try {
             await loginUser(data.email, data.password);
@@ -28,8 +28,16 @@ const Login = () => {
         }
     }
  
-    const handleGoogleSignIn = () => {
-        console.log("Google Sign In");
+    const handleGoogleSignIn = async (e) => {
+        e.preventDefault(); // Prevent form submission
+        try {
+            const result = await googleSignIn();
+            console.log("Google sign-in successful:", result);
+            navigate('/');
+        } catch (error) {
+            console.error("Google sign-in error:", error);
+            setMessage("Google sign-in failed. Please try again.");
+        }
     }
 
     return (
@@ -81,6 +89,7 @@ const Login = () => {
                         </div>
 
                         <button
+                            type="button"
                             onClick={handleGoogleSignIn}
                             className="w-full flex items-center justify-center bg-yellow-500 hover:bg-yellow-400 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500/50 transition-all duration-200 transform hover:scale-[1.02]"
                         >

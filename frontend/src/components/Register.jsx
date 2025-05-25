@@ -4,6 +4,7 @@ import { FaGoogle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -16,9 +17,9 @@ const Register = () => {
         formState: { errors },
     } = useForm();
 
-    const {registerUser} = useAuth();
-    
-    const onSubmit = async (data) => {
+    const {registerUser, googleSignIn} = useAuth();
+    const navigate = useNavigate();
+    const onSubmit = async (data) => { 
         try {
             await registerUser(data.email, data.password);
             alert("User registered successfully");
@@ -29,8 +30,14 @@ const Register = () => {
         }
     }
 
-    const handleGoogleSignIn = () => {
-        console.log("Google Sign In");
+    const handleGoogleSignIn = async () => {
+        try {
+            await googleSignIn();
+            alert("User logged in successfully");
+            navigate('/');
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (

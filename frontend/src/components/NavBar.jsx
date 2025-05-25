@@ -8,6 +8,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import avatarImg from '../assets/avatar.svg';
 import wbhLogo from '../assets/WBH2.svg';
 import { useSelector } from 'react-redux';
+import { useAuth } from '../context/AuthContext';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -19,10 +20,28 @@ const navigation = [
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.cartItems)
-  
+  const {currentUser, logoutUser} = useAuth();
 
-  
-  const currentUser = false;
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      setIsDropdownOpen(false); // Close dropdown after logout
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  }
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.dropdown-container')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -51,7 +70,7 @@ const NavBar = () => {
 
           {/* Right Side */}
           <div className="relative flex items-center md:space-x-4 space-x-3">
-            <div className="relative">
+            <div className="relative dropdown-container">
               {currentUser ? (
                 <>
                   <button 
@@ -80,6 +99,14 @@ const NavBar = () => {
                             </Link>
                           </li>
                         ))}
+                        <li>
+                          <button 
+                            onClick={handleLogout} 
+                            className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-light-yellow/20 hover:text-dark-red"
+                          >
+                            Logout
+                          </button>
+                        </li>
                       </ul>
                     </div>
                   )}
