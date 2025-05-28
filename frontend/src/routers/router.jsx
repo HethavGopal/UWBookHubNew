@@ -8,6 +8,12 @@ import CartPage from "../pages/books/CartPage.jsx";
 import CheckutPage from "../pages/books/CheckutPage.jsx";
 import SingleBook from "../pages/books/SingleBook.jsx";
 import PrivateRouter from "./PrivateRouter.jsx";
+import AdminRoute from "./AdminRoute.jsx";
+import AdminLogin from "../components/AdminLogin.jsx";
+import DashboardLayout from "../pages/dashboard/DashboardLayout.jsx";
+import Dashboard from "../pages/dashboard/Dashboard.jsx";
+
+
 const router = createBrowserRouter([
     {
       path: "/",
@@ -44,6 +50,32 @@ const router = createBrowserRouter([
         {
           path: "/books/:id",
           element: <SingleBook/>
+        },
+        {
+          path: "/admin",
+            element: <AdminLogin/>
+        },
+        {
+          path: "/dashboard",
+          element: <AdminRoute><DashboardLayout/></AdminRoute>,
+          children: [
+            {
+              path: "",
+              element:  <AdminRoute><Dashboard/></AdminRoute>,
+            }, 
+            {
+              path: "add-new-book",
+              element: <AdminRoute><div>Add New Book</div></AdminRoute>
+            },
+            {
+              path: "edit-book/:id",
+              element: <AdminRoute><div>Edit Book</div></AdminRoute>
+            },
+            {
+              path: "manage-books",
+              element: <AdminRoute><div>Manage Books</div></AdminRoute>
+            }
+          ]
         }
 
       ]
