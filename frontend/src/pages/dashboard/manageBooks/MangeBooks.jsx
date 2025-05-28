@@ -24,7 +24,7 @@ const ManageBooks = () => {
 
     // Handle navigating to Edit Book page
     const handleEditClick = (id) => {
-        navigate(`dashboard/edit-book/${id}`);
+        navigate(`/dashboard/edit-book/${id}`);
     };
   return (
     <section className="py-1 bg-blueGray-50">
@@ -77,30 +77,30 @@ const ManageBooks = () => {
                                   {book.category}
                                 </td>
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-
                                     ${book.newPrice}
                                 </td>
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 space-x-4">
-
-                                    <Link to={`/dashboard/edit-book/${book._id}`} className="font-medium text-indigo-600 hover:text-indigo-700 mr-2 hover:underline underline-offset-2">
-                                        Edit
-                                    </Link>
                                     <button 
-                                    onClick={() => handleDeleteBook(book._id)}
-                                    className="font-medium bg-red-500 py-1 px-4 rounded-full text-white mr-2">Delete</button>
+                                        onClick={() => handleEditClick(book._id)}
+                                        className="font-medium bg-blue-500 py-1 px-4 rounded-full text-white mr-2 hover:bg-blue-600"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button 
+                                        onClick={() => handleDeleteBook(book._id)}
+                                        className="font-medium bg-red-500 py-1 px-4 rounded-full text-white mr-2 hover:bg-red-600"
+                                    >
+                                        Delete
+                                    </button>
                                 </td>
                             </tr> 
                             ))
                         }
-         
-
                     </tbody>
-
                 </table>
             </div>
         </div>
     </div>
-
 </section>
   )
 }
