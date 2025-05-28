@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 5000;
+const adminRoute = require('./src/stats/admin.stats');
 require('dotenv').config()
 
 
@@ -19,6 +20,7 @@ const userRoute = require('./src/users/user.route');
 // Routes
 app.use("/api/books", bookRoute);
 app.use("/api/auth", userRoute);
+app.use("/api/admin", adminRoute);
 
 // Root route - only matches exact '/' path
 app.get('/', (req, res) => {

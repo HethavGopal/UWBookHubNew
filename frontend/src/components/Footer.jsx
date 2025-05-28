@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className="bg-black text-white py-8 w-full">
       <div className="w-full">
         {/* Top Section */}
-        <div className="w-full max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 px-4">
+        <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 px-4">
           {/* Left Side - Logo and Nav */}
           <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
             <img src={footerLogo} alt="Logo" className="mb-4 w-24" />
@@ -40,7 +40,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="w-full max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center mt-8 border-t border-gray-800 pt-4 px-4">
+        <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center mt-8 border-t border-gray-800 pt-4 px-4">
           {/* Left Side - Privacy Links */}
           <ul className="flex gap-6 mb-4 md:mb-0 text-xs">
             <li><a href="#privacy" className="hover:text-[#FF3811] transition-colors">Privacy Policy</a></li>

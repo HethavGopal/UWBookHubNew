@@ -17,7 +17,7 @@ const Recommended = () => {
   const { data: books = [], isLoading, error } = useFetchAllBooksQuery()
     
   return (
-    <div className='py-15'>
+    <div className='py-15 max-w-screen-2xl mx-auto px-4'>
          <h2 className="text-xl font-bold text-gray-800">Recommended Books</h2>
          <Swiper
           slidesPerView={1}

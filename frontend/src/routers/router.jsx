@@ -12,7 +12,7 @@ import AdminRoute from "./AdminRoute.jsx";
 import AdminLogin from "../components/AdminLogin.jsx";
 import DashboardLayout from "../pages/dashboard/DashboardLayout.jsx";
 import Dashboard from "../pages/dashboard/Dashboard.jsx";
-
+import MangeBooks from "../pages/dashboard/manageBooks/MangeBooks.jsx";
 
 const router = createBrowserRouter([
     {
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
             },
             {
               path: "manage-books",
-              element: <AdminRoute><div>Manage Books</div></AdminRoute>
+              element: <AdminRoute><MangeBooks/></AdminRoute>
             }
           ]
         }

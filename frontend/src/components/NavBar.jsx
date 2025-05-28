@@ -45,7 +45,7 @@ const NavBar = () => {
 
   return (
     <header className="bg-white border-b border-gray-200">
-      <nav className="max-w-screen-2xl mx-auto px-4 py-4">
+      <nav className="w-full px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Left Side */}
           <div className="flex items-center md:gap-8 gap-4">
