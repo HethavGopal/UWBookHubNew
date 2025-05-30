@@ -15,6 +15,9 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import MangeBooks from "../pages/dashboard/manageBooks/MangeBooks.jsx";
 import AddBook from "../pages/dashboard/addBook/AddBook.jsx";
 import UpdateBook from "../pages/dashboard/editBook/UpdateBook.jsx";
+
+import AddNewItem from "../pages/user/AddNewItem.jsx";
+
 const router = createBrowserRouter([
     {
       path: "/",
@@ -77,8 +80,11 @@ const router = createBrowserRouter([
               element: <AdminRoute><MangeBooks/></AdminRoute>
             }
           ]
+        },
+        {
+          path: "add-new-item",
+          element: <PrivateRouter><AddNewItem/></PrivateRouter>
         }
-
       ]
     },
 ]);
