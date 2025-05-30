@@ -86,52 +86,48 @@ const NavBar = () => {
   return (
     <header className={`fixed top-0 left-0 right-0 transition-all duration-500 ease-out z-50 ${
       isScrolled 
-        ? 'bg-black/95 backdrop-blur-xl shadow-2xl border-b border-gray-700/60 py-3' 
-        : 'bg-gradient-to-r from-gray-900/90 via-black/90 to-gray-900/90 backdrop-blur-md border-b border-gray-700/40 shadow-xl py-4'
+        ? 'bg-black/95 backdrop-blur-xl shadow-2xl border-b border-gray-700/60 py-2 sm:py-3' 
+        : 'bg-gradient-to-r from-gray-900/90 via-black/90 to-gray-900/90 backdrop-blur-md border-b border-gray-700/40 shadow-xl py-3 sm:py-4'
     }`}>
-      <nav className="w-full px-4">
+      <nav className="w-full px-3 sm:px-4">
         <div className="flex justify-between items-center">
           {/* Left Side */}
-          <div className="flex items-center md:gap-8 gap-4">
-            <button className="lg:hidden text-dark-accent hover:text-yellow-300 transition-all duration-300 hover:scale-110 p-2 rounded-xl hover:bg-dark-accent/10">
-              <HiBars3CenterLeft className="size-6" />
-            </button>
-
+          <div className="flex items-center gap-2 sm:gap-4 md:gap-8">
             <Link to="/" className="flex items-center group">
               <img src={wbhLogo} alt="WBH Logo" className={`w-auto transition-all duration-500 ease-out group-hover:scale-105 ${
-                isScrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'
+                isScrolled ? 'h-8 sm:h-10 md:h-12' : 'h-10 sm:h-12 md:h-16'
               }`} />
             </Link>
 
-            {/* Enhanced Search bar with suggestions */}
-            <div className={`relative search-container transition-all duration-500 ease-out ${
-              isScrolled ? 'sm:w-64 w-36' : 'sm:w-72 w-40'
+            {/* Enhanced Search bar with suggestions - Hidden on very small screens */}
+            <div className={`relative search-container transition-all duration-500 ease-out hidden xs:block ${
+              isScrolled ? 'w-24 sm:w-48 md:w-64' : 'w-28 sm:w-56 md:w-72'
             }`}>
-              <IoSearchOutline className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 transition-colors duration-300 z-10" />
+              <IoSearchOutline className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 transition-colors duration-300 z-10 size-3 sm:size-4" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
-                placeholder="Search for books..."
-                className="bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm text-dark-text w-full py-2.5 md:px-8 px-6 text-sm rounded-xl border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-dark-accent/50 focus:border-dark-accent transition-all duration-300 hover:border-gray-500 hover:shadow-lg hover:shadow-dark-accent/10"
+                placeholder="Search..."
+                className="bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm text-dark-text w-full py-2 sm:py-2.5 pl-8 sm:pl-10 md:pl-12 pr-3 sm:pr-4 text-xs sm:text-sm rounded-lg sm:rounded-xl border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-dark-accent/50 focus:border-dark-accent transition-all duration-300 hover:border-gray-500 hover:shadow-lg hover:shadow-dark-accent/10"
               />
               
               {/* Search Suggestions Dropdown */}
               {isSearchFocused && (searchQuery.length > 0 || true) && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-black/95 backdrop-blur-xl border border-gray-600/50 rounded-xl shadow-2xl z-[9999] max-h-80 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-black/95 backdrop-blur-xl border border-gray-600/50 rounded-lg sm:rounded-xl shadow-2xl z-[9999] max-h-60 sm:max-h-80 overflow-y-auto">
                   {searchQuery.length > 0 ? (
-                    <div className="p-2">
+                    <div className="p-1 sm:p-2">
                       {filteredSuggestions.length > 0 ? (
                         filteredSuggestions.map((suggestion, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 hover:bg-gradient-to-r hover:from-gray-700/50 hover:to-gray-600/50 rounded-lg cursor-pointer transition-all duration-200">
+                          <div key={index} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-gradient-to-r hover:from-gray-700/50 hover:to-gray-600/50 rounded-lg cursor-pointer transition-all duration-200">
                             <div className="flex-shrink-0">
-                              {suggestion.type === 'trending' && <BiTrendingUp className="w-4 h-4 text-dark-accent" />}
-                              {suggestion.type === 'category' && <BiBookOpen className="w-4 h-4 text-blue-400" />}
-                              {suggestion.type === 'recent' && <IoSearchOutline className="w-4 h-4 text-gray-400" />}
+                              {suggestion.type === 'trending' && <BiTrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-dark-accent" />}
+                              {suggestion.type === 'category' && <BiBookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-blue-400" />}
+                              {suggestion.type === 'recent' && <IoSearchOutline className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm text-dark-text truncate">{suggestion.title}</div>
+                              <div className="text-xs sm:text-sm text-dark-text truncate">{suggestion.title}</div>
                               <div className="text-xs text-gray-400 truncate">
                                 {suggestion.category && `in ${suggestion.category}`}
                                 {suggestion.count && suggestion.count}
@@ -140,19 +136,19 @@ const NavBar = () => {
                           </div>
                         ))
                       ) : (
-                        <div className="p-4 text-center text-gray-400">
+                        <div className="p-3 sm:p-4 text-center text-gray-400 text-xs sm:text-sm">
                           No results found for "{searchQuery}"
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="p-2">
-                      <div className="p-3 text-xs text-gray-400 border-b border-gray-700/50">Trending Searches</div>
+                    <div className="p-1 sm:p-2">
+                      <div className="p-2 sm:p-3 text-xs text-gray-400 border-b border-gray-700/50">Trending Searches</div>
                       {searchSuggestions.filter(s => s.type === 'trending').map((suggestion, index) => (
-                        <div key={index} className="flex items-center gap-3 p-3 hover:bg-gradient-to-r hover:from-gray-700/50 hover:to-gray-600/50 rounded-lg cursor-pointer transition-all duration-200">
-                          <BiTrendingUp className="w-4 h-4 text-dark-accent" />
+                        <div key={index} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-gradient-to-r hover:from-gray-700/50 hover:to-gray-600/50 rounded-lg cursor-pointer transition-all duration-200">
+                          <BiTrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-dark-accent" />
                           <div className="flex-1">
-                            <div className="text-sm text-dark-text">{suggestion.title}</div>
+                            <div className="text-xs sm:text-sm text-dark-text">{suggestion.title}</div>
                             <div className="text-xs text-gray-400">in {suggestion.category}</div>
                           </div>
                         </div>
@@ -165,42 +161,42 @@ const NavBar = () => {
           </div>
 
           {/* Right Side */}
-          <div className="relative flex items-center md:space-x-4 space-x-3">
+          <div className="relative flex items-center space-x-2 sm:space-x-3 md:space-x-4">
             <div className="relative dropdown-container">
               {currentUser ? (
                 <>
                   <button 
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="hover:ring-2 hover:ring-dark-accent/50 rounded-full transition-all duration-300 hover:scale-105 p-1"
+                    className="hover:ring-2 hover:ring-dark-accent/50 rounded-full transition-all duration-300 hover:scale-105 p-0.5 sm:p-1"
                   >
                     <img
                       src={avatarImg}
                       alt="avatar"
                       className={`rounded-full border-2 border-dark-accent shadow-lg transition-all duration-500 ease-out ${
-                        isScrolled ? 'size-7' : 'size-8'
+                        isScrolled ? 'size-6 sm:size-7' : 'size-7 sm:size-8'
                       }`}
                     />
                   </button>
 
                   {/* Dropdown - Enhanced z-index and blur */}
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-black/95 backdrop-blur-xl border border-gray-600/50 rounded-xl shadow-2xl z-[9999]">
-                      <ul className="py-2">
+                    <div className="absolute right-0 mt-2 w-40 sm:w-48 bg-black/95 backdrop-blur-xl border border-gray-600/50 rounded-xl shadow-2xl z-[9999]">
+                      <ul className="py-1 sm:py-2">
                         {navigation.map((item) => (
                           <li key={item.name}>
                             <Link
                               to={item.href}
-                              className="block px-4 py-2.5 text-sm text-dark-text hover:bg-gradient-to-r hover:from-gray-700/50 hover:to-gray-600/50 hover:text-dark-accent transition-all duration-300 rounded-lg mx-2"
+                              className="block px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-dark-text hover:bg-gradient-to-r hover:from-gray-700/50 hover:to-gray-600/50 hover:text-dark-accent transition-all duration-300 rounded-lg mx-1 sm:mx-2"
                               onClick={() => setIsDropdownOpen(false)}
                             >
                               {item.name}
                             </Link>
                           </li>
                         ))}
-                        <li className="border-t border-gray-700/50 mt-2 pt-2">
+                        <li className="border-t border-gray-700/50 mt-1 sm:mt-2 pt-1 sm:pt-2">
                           <button 
                             onClick={handleLogout} 
-                            className="block w-full text-left px-4 py-2.5 text-sm text-dark-text hover:bg-gradient-to-r hover:from-red-900/20 hover:to-red-800/20 hover:text-red-400 transition-all duration-300 rounded-lg mx-2"
+                            className="block w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-dark-text hover:bg-gradient-to-r hover:from-red-900/20 hover:to-red-800/20 hover:text-red-400 transition-all duration-300 rounded-lg mx-1 sm:mx-2"
                           >
                             Logout
                           </button>
@@ -210,40 +206,43 @@ const NavBar = () => {
                   )}
                 </>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
                   <Link 
                     to="/login" 
-                    className={`font-semibold text-dark-accent hover:text-yellow-300 border border-dark-accent/50 rounded-xl hover:bg-dark-accent/10 hover:border-dark-accent transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-dark-accent/20 ${
-                      isScrolled ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'
+                    className={`font-semibold text-dark-accent hover:text-yellow-300 border border-dark-accent/50 rounded-lg sm:rounded-xl hover:bg-dark-accent/10 hover:border-dark-accent transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-dark-accent/20 ${
+                      isScrolled ? 'px-2 sm:px-3 py-1 sm:py-1.5 text-xs' : 'px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm'
                     }`}
                   >
-                    Login
+                    <span className="sm:hidden">Log</span>
+                    <span className="hidden sm:inline">Login</span>
                   </Link>
                   <Link 
                     to="/register" 
-                    className={`font-semibold text-black bg-gradient-to-r from-dark-accent to-yellow-300 hover:from-yellow-300 hover:to-dark-accent rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-dark-accent/25 ${
-                      isScrolled ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'
+                    className={`font-semibold text-black bg-gradient-to-r from-dark-accent to-yellow-300 hover:from-yellow-300 hover:to-dark-accent rounded-lg sm:rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-dark-accent/25 ${
+                      isScrolled ? 'px-2 sm:px-3 py-1 sm:py-1.5 text-xs' : 'px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm'
                     }`}
                   >
-                    Register
+                    <span className="sm:hidden">Join</span>
+                    <span className="hidden sm:inline">Sign Up</span>
                   </Link>
                 </div>
               )}
             </div>
 
-            <button className="text-dark-accent hover:text-yellow-300 transition-all duration-300 hover:scale-110 p-2 hover:bg-dark-accent/10 rounded-xl relative">
-              <IoMdHeartEmpty className={`transition-all duration-500 ease-out ${isScrolled ? 'size-5' : 'size-6'}`} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">0</span>
+            {/* Heart and Cart - Hidden on mobile, visible on sm and up */}
+            <button className="hidden sm:block text-dark-accent hover:text-yellow-300 transition-all duration-300 hover:scale-110 p-1 sm:p-2 hover:bg-dark-accent/10 rounded-lg sm:rounded-xl relative">
+              <IoMdHeartEmpty className={`transition-all duration-500 ease-out ${isScrolled ? 'size-4 sm:size-5' : 'size-5 sm:size-6'}`} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center font-bold">0</span>
             </button>
 
             <Link
               to="/cart"
-              className={`bg-gradient-to-r from-dark-accent to-yellow-300 text-black flex items-center gap-2 rounded-xl hover:from-yellow-300 hover:to-dark-accent transition-all duration-300 shadow-lg hover:shadow-dark-accent/25 hover:scale-105 relative ${
-                isScrolled ? 'px-3 py-1.5' : 'px-4 py-2'
+              className={`hidden sm:flex bg-gradient-to-r from-dark-accent to-yellow-300 text-black items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl hover:from-yellow-300 hover:to-dark-accent transition-all duration-300 shadow-lg hover:shadow-dark-accent/25 hover:scale-105 relative ${
+                isScrolled ? 'px-2 sm:px-3 py-1 sm:py-1.5' : 'px-3 sm:px-4 py-1.5 sm:py-2'
               }`}
             >
-              <AiOutlineShoppingCart className={`transition-all duration-500 ease-out ${isScrolled ? 'size-4' : 'size-5'}`} />
-              <span className={`bg-black/20 text-black px-2 py-0.5 rounded-full font-bold min-w-[20px] text-center text-xs`}>
+              <AiOutlineShoppingCart className={`transition-all duration-500 ease-out ${isScrolled ? 'size-3 sm:size-4' : 'size-4 sm:size-5'}`} />
+              <span className={`bg-black/20 text-black px-1 sm:px-2 py-0.5 rounded-full font-bold min-w-[16px] sm:min-w-[20px] text-center text-xs`}>
                 {cartItems.length > 0 ? cartItems.length : 0}
               </span>
             </Link>
