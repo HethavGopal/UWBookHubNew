@@ -41,9 +41,16 @@ const news = [
 
 const News = () => {
     return (
-      <div className='py-16 max-w-screen-2xl mx-auto px-4'>
-          <h2 className='text-3xl font-semibold mb-6'>News </h2>
+      <div className='py-20 max-w-screen-2xl mx-auto px-4'>
+        <div className="mb-12 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-10 bg-gradient-to-b from-dark-accent to-yellow-300 rounded-full"></div>
+            <span className="text-dark-accent font-bold text-sm tracking-wider uppercase">Latest Updates</span>
+          </div>
+          <h2 className='text-4xl font-bold bg-gradient-to-r from-dark-text via-gray-200 to-dark-text bg-clip-text text-transparent'>News & Stories</h2>
+        </div>
   
+          <div className="relative [&_.swiper-button-next]:text-white [&_.swiper-button-prev]:text-white [&_.swiper-button-next]:bg-gradient-to-r [&_.swiper-button-next]:from-gray-800 [&_.swiper-button-next]:to-gray-700 [&_.swiper-button-prev]:bg-gradient-to-r [&_.swiper-button-prev]:from-gray-800 [&_.swiper-button-prev]:to-gray-700 [&_.swiper-button-next]:rounded-full [&_.swiper-button-prev]:rounded-full [&_.swiper-button-next]:w-12 [&_.swiper-button-prev]:w-12 [&_.swiper-button-next]:h-12 [&_.swiper-button-prev]:h-12 [&_.swiper-button-next]:shadow-xl [&_.swiper-button-prev]:shadow-xl [&_.swiper-button-next]:border [&_.swiper-button-prev]:border [&_.swiper-button-next]:border-gray-600/50 [&_.swiper-button-prev]:border-gray-600/50">
           <Swiper
           slidesPerView={1}
           spaceBetween={30}
@@ -67,30 +74,42 @@ const News = () => {
             },
           }}
           modules={[Pagination, Navigation]}
-          className="mySwiper [&_.swiper-pagination-bullet-active]:bg-[#FF3811] pb-12"
+          className="mySwiper [&_.swiper-pagination-bullet-active]:bg-dark-accent [&_.swiper-pagination-bullet]:bg-gray-600 pb-16"
         >
           
           {
               news.map((item, index) => (
                   <SwiperSlide key={index}>
-                      <div className='flex flex-col sm:flex-row sm:justify-between items-start gap-6 h-full bg-white p-4 rounded-xl'>
+                      <div className='flex flex-col sm:flex-row sm:justify-between items-start gap-6 h-full bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm p-6 rounded-2xl border border-gray-600/30 group hover:border-dark-accent/30 transition-all duration-500 hover:shadow-2xl hover:shadow-dark-accent/10 hover:-translate-y-2'>
                           {/* content */}
-                          <div className='w-full sm:w-1/2 space-y-3'>
-                              <Link to="/">
-                                   <h3 className='text-lg font-semibold hover:text-blue-500'>{item.title}</h3>
+                          <div className='w-full sm:w-1/2 space-y-4'>
+                              <Link to="/" className="group-inner">
+                                   <h3 className='text-xl font-bold hover:text-dark-accent text-dark-text transition-colors duration-300 leading-tight group-inner-hover:text-dark-accent'>{item.title}</h3>
                               </Link>
-                              <div className='w-12 h-[3px] bg-primary'></div>
-                              <p className='text-xs leading-relaxed text-gray-600'>{item.description}</p>
+                              <div className='w-16 h-1 bg-gradient-to-r from-dark-accent to-yellow-300 rounded-full'></div>
+                              <p className='text-sm leading-relaxed text-gray-300 group-hover:text-gray-200 transition-colors duration-300'>{item.description}</p>
+                              <div className="pt-2">
+                                <Link to="/" className="inline-flex items-center gap-2 text-dark-accent hover:text-yellow-300 font-semibold text-sm transition-colors duration-300">
+                                  Read more 
+                                  <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </Link>
+                              </div>
                           </div>
   
-                          <div className='w-full sm:w-1/2 h-[220px]'>
-                              <img src={item.image} alt={item.title} className='w-full h-full object-cover rounded-lg shadow-md'/>
+                          <div className='w-full sm:w-1/2 h-[250px] group-image'>
+                              <div className="relative h-full rounded-xl overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
+                                <img src={item.image} alt={item.title} className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'/>
+                              </div>
                           </div>
                       </div>
                   </SwiperSlide>
               ) )
           }
         </Swiper>
+        </div>
       </div>
     )
   }

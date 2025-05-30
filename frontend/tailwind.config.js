@@ -8,10 +8,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': '#FFD54F',
-        'secondary': '#0D0842',
-        'blackBG': '#F3F3F3',
+        'primary': '#FFF176',  // Light yellow accent for buttons/links
+        'secondary': '#FFFFFF',  // White for text
+        'blackBG': '#000000',  // Black background
         'Favorite': '#FF5841',
+        // Dark theme colors
+        'dark-bg': '#000000',     // Main dark background
+        'dark-text': '#FFFFFF',   // Primary text color
+        'dark-accent': '#FFF176', // Light yellow for accents
       },
       fontFamily: {
         'primary': ['Montserrat', 'sans-serif'],

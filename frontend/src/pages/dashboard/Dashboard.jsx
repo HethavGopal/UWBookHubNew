@@ -134,7 +134,6 @@ const Dashboard = () => {
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </button>
-    
                 </div>
                 <div className="overflow-y-auto" style={{maxHeight: '24rem'}}>
                   <ul className="p-6 space-y-6">
@@ -204,11 +203,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </section>
-            <section className="text-right font-semibold text-gray-500">
-              <a href="#" className="text-purple-600 hover:underline">Recreated on Codepen</a> with <a href="https://tailwindcss.com/" className="text-teal-400 hover:underline">Tailwind CSS</a> by Azri Kahar, <a href="https://dribbble.com/shots/10711741-Free-UI-Kit-for-Figma-Online-Courses-Dashboard" className="text-purple-600 hover:underline">original design</a> made by Chili Labs
-            </section>
     </>
- 
   )
 }
 

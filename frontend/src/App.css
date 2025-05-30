@@ -6,7 +6,7 @@
   }
   
   .swiper-slide {
-    background: #fff;
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,7 +24,7 @@
     display: none !important;
  }
  .swiper-button-next{
-    @apply bg-white p-5 rounded-full z-50 shadow-md
+    @apply bg-dark-accent p-5 rounded-full z-50 shadow-md text-black
  }
 
  .swiper-button-prev:after, .swiper-button-next:after{
@@ -32,17 +32,19 @@
  }
 
  .btn-primary {
-    @apply bg-primary  px-12 py-2 rounded-md text-base font-secondary font-bold hover:bg-secondary hover:text-white transition-all duration-200 cursor-pointer
+    @apply bg-dark-accent px-12 py-2 rounded-md text-base font-secondary font-bold hover:bg-yellow-300 hover:text-black transition-all duration-200 cursor-pointer text-black
  }
 
 .html{
    scroll-behavior: smooth;
 }
 
-/* SweetAlert Custom Styles */
+/* SweetAlert Custom Styles - Updated for dark theme */
 .small-alert {
   font-size: 0.875rem !important;
   padding: 0.5rem !important;
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
 }
 
 .rectangular-alert {
@@ -53,11 +55,14 @@
   font-size: 1rem !important;
   padding: 0.5rem 0 !important;
   margin: 0 !important;
+  color: #FFFFFF !important;
 }
 
 .small-alert-button {
   font-size: 0.875rem !important;
   padding: 0.5rem 1rem !important;
+  background-color: #FFF176 !important;
+  color: #000000 !important;
 }
 
 .small-icon {

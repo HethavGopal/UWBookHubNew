@@ -23,36 +23,53 @@ const TopSellers = () => {
     : books.filter(book => book?.category?.toLowerCase() === selectedCategory.toLowerCase())
 
   if (isLoading) {
-    return <div className="text-center py-10">Loading...</div>
+    return (
+      <div className="text-center py-20">
+        <div className="inline-flex items-center gap-3">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-dark-accent border-t-transparent"></div>
+          <span className="text-dark-text text-lg">Loading amazing books...</span>
+        </div>
+      </div>
+    )
   }
 
   if (error) {
-    return <div className="text-center py-10 text-red-600">Error loading books: {error.message}</div>
+    return <div className="text-center py-10 text-red-400 bg-red-900/20 rounded-xl mx-4 border border-red-700/30">Error loading books: {error.message}</div>
   }
 
   return (
-    <div className='max-w-screen-2xl mx-auto px-4 py-6'>
-      <div className="mb-4">
-        <span className="text-red-900 font-bold block mb-1 text-xs">Available Books</span>
-        <h2 className="text-xl font-bold text-gray-800">Latest Books</h2>
+    <div className='max-w-screen-2xl mx-auto px-4 py-12'>
+      <div className="mb-8 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-10 bg-gradient-to-b from-dark-accent to-yellow-300 rounded-full"></div>
+          <span className="text-dark-accent font-bold text-sm tracking-wider uppercase">Available Books</span>
+        </div>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-dark-text via-gray-200 to-dark-text bg-clip-text text-transparent">Latest Books</h2>
       </div>
       
       {/* Category Filter */}
-      <div className='mb-6'>
-        <select 
-          onChange={(e) => setSelectedCategory(e.target.value)} 
-          name="category" 
-          id="category" 
-          className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900 bg-white text-gray-700 cursor-pointer hover:border-red-900 transition-colors"
-        >
-          {categories.map((category, index) => (
-            <option key={index} value={category}>{category}</option>
-          ))}
-        </select>
+      <div className='mb-8'>
+        <div className="relative inline-block">
+          <select 
+            onChange={(e) => setSelectedCategory(e.target.value)} 
+            name="category" 
+            id="category" 
+            className="appearance-none px-6 py-3 text-sm rounded-xl border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-dark-accent/50 bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm text-dark-text cursor-pointer hover:border-dark-accent/50 transition-all duration-300 pr-12 font-semibold shadow-lg hover:shadow-dark-accent/10"
+          >
+            {categories.map((category, index) => (
+              <option key={index} value={category} className="bg-gray-800 text-dark-text font-medium">{category}</option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+            <svg className="w-4 h-4 text-dark-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
       </div>
 
       {/* Books Swiper */}
-      <div className="relative [&_.swiper-button-next]:text-red-900 [&_.swiper-button-prev]:text-red-900 [&_.swiper-button-next]:scale-75 [&_.swiper-button-prev]:scale-75 [&_.swiper-button-next]:right-0 [&_.swiper-button-prev]:left-4">
+      <div className="relative [&_.swiper-button-next]:text-white [&_.swiper-button-prev]:text-white [&_.swiper-button-next]:scale-90 [&_.swiper-button-prev]:scale-90 [&_.swiper-button-next]:right-0 [&_.swiper-button-prev]:left-4 [&_.swiper-button-next]:bg-gradient-to-r [&_.swiper-button-next]:from-gray-800 [&_.swiper-button-next]:to-gray-700 [&_.swiper-button-prev]:bg-gradient-to-r [&_.swiper-button-prev]:from-gray-800 [&_.swiper-button-prev]:to-gray-700 [&_.swiper-button-next]:rounded-full [&_.swiper-button-prev]:rounded-full [&_.swiper-button-next]:w-12 [&_.swiper-button-prev]:w-12 [&_.swiper-button-next]:h-12 [&_.swiper-button-prev]:h-12 [&_.swiper-button-next]:shadow-xl [&_.swiper-button-prev]:shadow-xl [&_.swiper-button-next]:border [&_.swiper-button-prev]:border [&_.swiper-button-next]:border-gray-600/50 [&_.swiper-button-prev]:border-gray-600/50 [&_.swiper-button-next]:hover:border-dark-accent/50 [&_.swiper-button-prev]:hover:border-dark-accent/50">
         <Swiper
           slidesPerView={1}
           spaceBetween={30}
