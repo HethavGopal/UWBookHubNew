@@ -3,6 +3,11 @@ import { BiImageAdd, BiDollarCircle, BiTag, BiText, BiMapPin, BiPhone, BiUser, B
 import { FiX, FiCamera, FiCheck } from 'react-icons/fi'
 import { HiOutlineSparkles, HiOutlineLightBulb } from 'react-icons/hi'
 
+import axios from 'axios';
+import { auth, storage } from '../../firebase/firebase.config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import getBaseUrl from '../../utils/baseURL';
+
 const AddNewItem = () => {
   const [selectedImages, setSelectedImages] = useState([])
   const [currentStep, setCurrentStep] = useState(1)
@@ -19,6 +24,121 @@ const AddNewItem = () => {
     email: '',
     meetupOptions: []
   })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Final validation of all steps
+    const step1Errors = validateStep1()
+    const step2Errors = validateStep2()
+    const step3Errors = validateStep3()
+    
+    const allErrors = { ...step1Errors, ...step2Errors, ...step3Errors }
+    
+    if (Object.keys(allErrors).length > 0) {
+      setErrors(allErrors)
+      setShowErrors(true)
+      // Go back to first step with errors
+      if (step1Errors && Object.keys(step1Errors).length > 0) {
+        setCurrentStep(1)
+      } else if (step2Errors && Object.keys(step2Errors).length > 0) {
+        setCurrentStep(2)
+      } else if (step3Errors && Object.keys(step3Errors).length > 0) {
+        setCurrentStep(3)
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    try {
+      // Get current user and token
+      const user = auth.currentUser;
+      if (!user) throw new Error('User not authenticated');
+      
+      const token = await user.getIdToken();
+
+      // Generate unique listing ID for organizing images
+      const listingId = `listing_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      // Upload images to Firebase Storage
+      const imageUrls = [];
+      if (selectedImages.length > 0) {
+        console.log('Uploading images to Firebase Storage...');
+        
+        for (let i = 0; i < selectedImages.length; i++) {
+          const image = selectedImages[i];
+          const fileExtension = image.name.split('.').pop();
+          const fileName = `listings/${user.uid}/${listingId}/image_${i + 1}.${fileExtension}`;
+          
+          // Create storage reference
+          const storageRef = storage;
+          const imageRef = ref(storageRef, fileName);
+          
+          // Upload image
+          const uploadTask = await uploadBytes(imageRef, image);
+          
+          // Get download URL
+          const downloadURL = await getDownloadURL(imageRef);
+          imageUrls.push(downloadURL);
+          
+          console.log(`Image ${i + 1} uploaded:`, downloadURL);
+        }
+      }
+
+      // Prepare data for backend
+      const submitData = {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        condition: formData.condition,
+        price: parseFloat(formData.price),
+        email: formData.email,
+        phone: formData.phone || '',
+        location: formData.location || '',
+        images: imageUrls 
+      };
+
+      console.log('Submitting item data:', submitData);
+
+      // Debug logging
+      const apiUrl = `${getBaseUrl()}/api/listings/create-listing`;
+      console.log('API URL:', apiUrl);
+      console.log('Token exists:', !!token);
+      console.log('Token preview:', token ? token.substring(0, 20) + '...' : 'No token');
+
+      // Send data to backend
+      const response = await axios.post(apiUrl, submitData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Backend response:', response.data);
+      alert('Item posted successfully! 🎉');
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        price: '',
+        category: '',
+        condition: '',
+        location: '',
+        phone: '',
+        email: '',
+        meetupOptions: []
+      })
+      setSelectedImages([])
+      setCurrentStep(1)
+      setErrors({})
+      setShowErrors(false)
+      
+    } catch (error) {
+      console.error("Error in creating listing:", error);
+      alert('Error posting item. Please try again.');
+    }
+  }
 
   const categories = [
     { value: 'textbooks', label: 'Textbooks', icon: '📚' },
@@ -619,6 +739,7 @@ const AddNewItem = () => {
                 ) : (
                   <button
                     type="button"
+                    onClick={handleSubmit}
                     className="px-8 py-3 bg-gradient-to-r from-dark-accent to-yellow-300 hover:from-yellow-300 hover:to-dark-accent text-black font-bold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2"
                   >
                     <HiOutlineSparkles className="w-5 h-5" />

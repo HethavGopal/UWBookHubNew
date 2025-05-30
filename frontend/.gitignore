@@ -12,6 +12,18 @@ dist
 dist-ssr
 *.local
 
+# Environment Variables (Contains Firebase config!)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Firebase Configuration (if you have separate config files)
+firebase-config.js
+firebaseConfig.js
+*firebase*adminsdk*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

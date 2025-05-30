@@ -1,0 +1,56 @@
+# Environment Variables 
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Firebase Service Account Keys
+*firebase*adminsdk*.json
+serviceAccountKey.json
+service-account-*.json
+firebase-service-account.json
+
+# Node.js Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime Files
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage and Testing
+coverage/
+.nyc_output
+.jest/
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Build and Distribution
+dist/
+build/
+
+# Temporary Files
+tmp/
+temp/
