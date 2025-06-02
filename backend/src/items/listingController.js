@@ -30,8 +30,22 @@ const createListing = async (req, res) => {
     }
 }
 
+const getAllListings = async (req, res) => {
+
+    try {
+        const listings = await Listing.find().sort({createdAt: -1})
+        res.status(200).send({listings})
+    } catch (error) {
+        console.log("Error in fetching listings", error);
+        res.status(500).send({message: "Internal server error"});
+    }
+
+}
+
+
 module.exports = {
     createListing,
+    getAllListings
 }
 
 

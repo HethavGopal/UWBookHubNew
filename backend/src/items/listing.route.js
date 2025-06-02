@@ -8,4 +8,6 @@ const controller = require('./listingController.js');
 
 router.post('/create-listing', auth, controller.createListing);
 
+router.get('/get-all-listings', controller.getAllListings);
+
 module.exports = router;

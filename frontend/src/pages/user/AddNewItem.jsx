@@ -505,14 +505,13 @@ const AddNewItem = () => {
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                     {categories.map((category, index) => {
-                      const Icon = category.icon
-                      const isSelected = formData.category === category.name
+                      const isSelected = formData.category === category.value
                       return (
                         <button
                           key={index}
                           type="button"
                           onClick={() => {
-                            setFormData({ ...formData, category: category.name })
+                            setFormData({ ...formData, category: category.value })
                             if (errors.category) {
                               setErrors({ ...errors, category: null })
                             }
@@ -523,9 +522,11 @@ const AddNewItem = () => {
                               : `border-gray-600/50 bg-gray-800/30 hover:border-gray-500 hover:bg-gray-800/50 ${errors.category ? 'border-red-500/50' : ''}`
                           }`}
                         >
-                          <Icon className={`w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 sm:mb-3 ${isSelected ? 'text-dark-accent' : 'text-gray-400 group-hover:text-gray-300'}`} />
+                          <div className={`text-2xl sm:text-3xl mx-auto mb-2 sm:mb-3 text-center`}>
+                            {category.icon}
+                          </div>
                           <span className={`block text-xs sm:text-sm font-semibold text-center ${isSelected ? 'text-dark-accent' : 'text-gray-300'}`}>
-                            {category.name}
+                            {category.label}
                           </span>
                           {isSelected && (
                             <div className="absolute -top-2 -right-2 w-6 h-6 bg-dark-accent rounded-full flex items-center justify-center">
@@ -597,13 +598,13 @@ const AddNewItem = () => {
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {conditions.map((condition, index) => {
-                      const isSelected = formData.condition === condition.name
+                      const isSelected = formData.condition === condition.value
                       return (
                         <button
                           key={index}
                           type="button"
                           onClick={() => {
-                            setFormData({ ...formData, condition: condition.name })
+                            setFormData({ ...formData, condition: condition.value })
                             if (errors.condition) {
                               setErrors({ ...errors, condition: null })
                             }
@@ -618,10 +619,10 @@ const AddNewItem = () => {
                             <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isSelected ? 'bg-purple-400' : 'bg-gray-500'}`}></div>
                             <div>
                               <h4 className={`font-bold text-sm sm:text-base ${isSelected ? 'text-purple-300' : 'text-gray-300'}`}>
-                                {condition.name}
+                                {condition.label}
                               </h4>
                               <p className={`text-xs sm:text-sm ${isSelected ? 'text-purple-400' : 'text-gray-400'}`}>
-                                {condition.description}
+                                {condition.emoji}
                               </p>
                             </div>
                           </div>

@@ -4,7 +4,6 @@ import { HiBars3CenterLeft } from "react-icons/hi2";
 import { IoSearchOutline } from "react-icons/io5";
 import { FiUser } from "react-icons/fi";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { AiOutlineShoppingCart } from "react-icons/ai";
 import { BiTrendingUp, BiBookOpen } from "react-icons/bi";
 import avatarImg from '../assets/avatar.svg';
 import wbhLogo from '../assets/WBHDARK.svg';
@@ -14,7 +13,7 @@ import { useAuth } from '../context/AuthContext';
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },
   { name: 'Orders', href: '/orders' },
-  { name: 'Cart Page', href: '/cart' },
+  { name: 'Sell Item', href: '/add-new-item' },
   { name: 'Check Out', href: '/checkout' },
 ];
 
@@ -234,18 +233,6 @@ const NavBar = () => {
               <IoMdHeartEmpty className={`transition-all duration-500 ease-out ${isScrolled ? 'size-4 sm:size-5' : 'size-5 sm:size-6'}`} />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-3 h-3 sm:w-4 sm:h-4 flex items-center justify-center font-bold">0</span>
             </button>
-
-            <Link
-              to="/cart"
-              className={`hidden sm:flex bg-gradient-to-r from-dark-accent to-yellow-300 text-black items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl hover:from-yellow-300 hover:to-dark-accent transition-all duration-300 shadow-lg hover:shadow-dark-accent/25 hover:scale-105 relative ${
-                isScrolled ? 'px-2 sm:px-3 py-1 sm:py-1.5' : 'px-3 sm:px-4 py-1.5 sm:py-2'
-              }`}
-            >
-              <AiOutlineShoppingCart className={`transition-all duration-500 ease-out ${isScrolled ? 'size-3 sm:size-4' : 'size-4 sm:size-5'}`} />
-              <span className={`bg-black/20 text-black px-1 sm:px-2 py-0.5 rounded-full font-bold min-w-[16px] sm:min-w-[20px] text-center text-xs`}>
-                {cartItems.length > 0 ? cartItems.length : 0}
-              </span>
-            </Link>
           </div>
         </div>
       </nav>
