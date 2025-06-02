@@ -52,7 +52,7 @@ const router = createBrowserRouter([
           element: <PrivateRouter><CheckutPage/></PrivateRouter>
         },
         {
-          path: "/books/:id",
+          path: "/listings/:id",
           element: <SingleBook/>
         },
         {
@@ -87,6 +87,10 @@ const router = createBrowserRouter([
         }
       ]
     },
-]);
+], {
+  future: {
+    v7_skipActionErrorRevalidation: true,
+  }
+});
 
   export default router;

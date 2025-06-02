@@ -10,4 +10,6 @@ router.post('/create-listing', auth, controller.createListing);
 
 router.get('/get-all-listings', controller.getAllListings);
 
+router.get('/:id', controller.getSingleListing);
+
 module.exports = router;

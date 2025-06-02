@@ -43,9 +43,22 @@ const getAllListings = async (req, res) => {
 }
 
 
+const getSingleListing = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const listing = await Listing.findById(id);
+        res.status(200).send({listing});
+    } catch (error) {
+        console.log("Error in fetching listing", error);
+        res.status(500).send({message: "Internal server error"});
+    }
+}
+
+
 module.exports = {
     createListing,
-    getAllListings
+    getAllListings,
+    getSingleListing
 }
 
 

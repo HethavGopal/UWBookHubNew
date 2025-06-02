@@ -1,41 +1,78 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useFetchBookByIdQuery } from '../../redux/features/cart/booksAPI'
-import getImgUrl from '../../utils/getImgUrl'
-import { FiShoppingCart, FiHeart, FiShare2, FiStar, FiUser, FiMapPin, FiMail, FiPhone, FiBookOpen, FiTrendingUp } from 'react-icons/fi'
+import { FiHeart, FiShare2, FiUser, FiMapPin, FiMail, FiPhone, FiBookOpen, FiTrendingUp } from 'react-icons/fi'
+import { BsShield } from 'react-icons/bs'
 import { HiOutlineEye } from 'react-icons/hi'
-import { useDispatch } from 'react-redux'
-import { addToCart } from '../../redux/features/cart/cartSlice'
+import getBaseUrl from '../../utils/baseURL'
 
 const SingleBook = () => {
-    const dispatch = useDispatch();
     const { id } = useParams();
-    const { data: book, isLoading, isError } = useFetchBookByIdQuery(id);
-    const [activeTab, setActiveTab] = useState('overview')
-    const [isFavorited, setIsFavorited] = useState(false)
-    const [showContactInfo, setShowContactInfo] = useState(false)
+    const [listing, setListing] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState('overview');
+    const [isFavorited, setIsFavorited] = useState(false);
+    const [showContactInfo, setShowContactInfo] = useState(false);
 
-    const handleAddToCart = (product) => {
-        dispatch(addToCart(product));
+    // Scroll to top immediately when component mounts or ID changes
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant'
+        });
+    }, [id]);
+
+    useEffect(() => {
+        const fetchListing = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`${getBaseUrl()}/api/listings/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch listing');
+                }
+                const data = await response.json();
+                setListing(data.listing);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchListing();
+        }
+    }, [id]);
+
+    // Helper function to get condition color
+    const getConditionColor = (condition) => {
+        switch(condition) {
+            case 'new': return 'text-green-400 bg-green-400/20'
+            case 'like-new': return 'text-blue-400 bg-blue-400/20'
+            case 'good': return 'text-yellow-400 bg-yellow-400/20'
+            case 'fair': return 'text-orange-400 bg-orange-400/20'
+            default: return 'text-gray-400 bg-gray-400/20'
+        }
     };
 
-    if(isLoading) return (
+    if(loading) return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-dark-accent"></div>
         </div>
     );
     
-    if(isError) return (
+    if(error || !listing) return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-            <div className="text-red-400 text-xl">Failed to load book details</div>
+            <div className="text-red-400 text-xl">Failed to load listing details: {error}</div>
         </div>
     );
 
     const handleShare = () => {
         if (navigator.share) {
             navigator.share({
-                title: book.title,
-                text: `Check out this book: ${book.title}`,
+                title: listing.title,
+                text: `Check out this listing: ${listing.title}`,
                 url: window.location.href,
             })
         } else {
@@ -44,10 +81,12 @@ const SingleBook = () => {
         }
     }
 
-    const mockSimilarBooks = [
-        { id: 2, title: "Advanced Chemistry", price: 45, image: "book-2.png" },
-        { id: 3, title: "Organic Chemistry", price: 52, image: "book-3.png" },
-        { id: 4, title: "Physics Fundamentals", price: 38, image: "book-4.png" }
+    
+
+    const mockSimilarListings = [
+        { id: 2, title: "Advanced Chemistry", price: 45, image: "https://via.placeholder.com/300x400/4A90E2/FFFFFF?text=Chemistry" },
+        { id: 3, title: "Organic Chemistry", price: 52, image: "https://via.placeholder.com/300x400/E74C3C/FFFFFF?text=Organic" },
+        { id: 4, title: "Physics Fundamentals", price: 38, image: "https://via.placeholder.com/300x400/2ECC71/FFFFFF?text=Physics" }
     ]
 
     return (
@@ -58,25 +97,30 @@ const SingleBook = () => {
                     <ol className="flex items-center space-x-2 text-sm text-gray-400">
                         <li><Link to="/" className="hover:text-dark-accent transition-colors duration-300">Home</Link></li>
                         <li>/</li>
-                        <li><Link to="/books" className="hover:text-dark-accent transition-colors duration-300">Books</Link></li>
+                        <li><Link to="/marketplace" className="hover:text-dark-accent transition-colors duration-300">Marketplace</Link></li>
                         <li>/</li>
-                        <li className="text-dark-accent">{book?.title}</li>
+                        <li className="text-dark-accent">{listing?.title}</li>
                     </ol>
                 </nav>
 
-                {/* Main Book Information */}
+                {/* Main Listing Information */}
                 <div className="bg-gradient-to-b from-gray-900/95 to-gray-800/95 backdrop-blur-md rounded-2xl p-8 border border-gray-700/50 shadow-2xl mb-8">
                     <div className="grid lg:grid-cols-2 gap-8">
                         {/* Image Section */}
                         <div className="flex items-center justify-center p-6 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl">
                             <div className="relative group">
                                 <img
-                                    src={getImgUrl(book.coverImage)}
-                                    alt={book.title}
-                                    className="max-h-[500px] object-contain rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
+                                    src={listing.images && listing.images.length > 0 ? listing.images[0] : '/placeholder-book.jpg'}
+                                    alt={listing.title}
+                                    className="max-h-[500px] max-w-full object-contain rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
                                 />
                                 <div className="absolute top-4 right-4 bg-dark-accent text-black px-3 py-1 rounded-full text-sm font-bold">
-                                    {book.category}
+                                    {listing.category}
+                                </div>
+                                {/* Condition badge */}
+                                <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-bold ${getConditionColor(listing.condition)}`}>
+                                    <BsShield className="inline w-3 h-3 mr-1" />
+                                    {listing.condition}
                                 </div>
                             </div>
                         </div>
@@ -85,33 +129,30 @@ const SingleBook = () => {
                         <div className="space-y-6">
                             <div>
                                 <h1 className="text-4xl font-bold bg-gradient-to-r from-dark-text via-gray-200 to-dark-text bg-clip-text text-transparent mb-4">
-                                    {book.title}
+                                    {listing.title}
                                 </h1>
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="flex items-center gap-1">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <FiStar
-                                                key={star}
-                                                className={`w-5 h-5 ${star <= 4 ? 'text-dark-accent fill-current' : 'text-gray-400'}`}
-                                            />
-                                        ))}
-                                        <span className="text-gray-400 ml-2">(4.2 • 28 reviews)</span>
+                                {listing.location && (
+                                    <div className="flex items-center gap-2 text-gray-400 mb-4">
+                                        <FiMapPin className="w-4 h-4" />
+                                        <span>{listing.location}</span>
                                     </div>
-                                </div>
+                                )}
                             </div>
 
-                            <p className="text-gray-300 text-lg leading-relaxed">{book.description}</p>
+                            <p className="text-gray-300 text-lg leading-relaxed">{listing.description}</p>
 
                             {/* Price Section */}
                             <div className="bg-gradient-to-r from-dark-accent/20 to-yellow-300/20 p-4 rounded-xl border border-dark-accent/30">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <span className="text-3xl font-bold text-dark-accent">${book.newPrice}</span>
+                                        <span className="text-3xl font-bold text-dark-accent">${listing.price}</span>
                                         <span className="text-gray-400 ml-2">• Negotiable</span>
                                     </div>
                                     <div className="text-right">
                                         <div className="text-sm text-gray-400">Condition</div>
-                                        <div className="text-green-400 font-semibold">Excellent</div>
+                                        <div className={`font-semibold capitalize ${getConditionColor(listing.condition).split(' ')[0]}`}>
+                                            {listing.condition}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -119,9 +160,9 @@ const SingleBook = () => {
                             {/* Action Buttons */}
                             <div className="grid grid-cols-2 gap-4">
                                 <button 
-                                    onClick={() => handleAddToCart(book)}
+                                    onClick={() => setShowContactInfo(!showContactInfo)}
                                     className="bg-gradient-to-r from-dark-accent to-yellow-300 hover:from-yellow-300 hover:to-dark-accent text-black font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-dark-accent/25 flex items-center justify-center gap-2">
-                                    <FiShoppingCart className="text-xl" />
+                                    <FiMail className="text-xl" />
                                     Contact Seller
                                 </button>
                                 
@@ -154,8 +195,8 @@ const SingleBook = () => {
                                             <FiUser className="text-black" />
                                         </div>
                                         <div>
-                                            <div className="text-dark-text font-semibold">Emily Chen</div>
-                                            <div className="text-gray-400 text-sm">Waterloo Student • 4.8★ (42 sales)</div>
+                                            <div className="text-dark-text font-semibold">Seller</div>
+                                            <div className="text-gray-400 text-sm">UW Student • Active {new Date(listing.createdAt).toLocaleDateString()}</div>
                                         </div>
                                     </div>
                                     <button
@@ -170,16 +211,20 @@ const SingleBook = () => {
                                     <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-2 animate-in slide-in-from-top-1 duration-300">
                                         <div className="flex items-center gap-2 text-gray-300">
                                             <FiMail className="w-4 h-4" />
-                                            <span>e3chen@uwaterloo.ca</span>
+                                            <span>{listing.email}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-gray-300">
-                                            <FiPhone className="w-4 h-4" />
-                                            <span>(519) 555-0123</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-gray-300">
-                                            <FiMapPin className="w-4 h-4" />
-                                            <span>Waterloo Campus, ON</span>
-                                        </div>
+                                        {listing.phone && (
+                                            <div className="flex items-center gap-2 text-gray-300">
+                                                <FiPhone className="w-4 h-4" />
+                                                <span>{listing.phone}</span>
+                                            </div>
+                                        )}
+                                        {listing.meetingPoint && (
+                                            <div className="flex items-center gap-2 text-gray-300">
+                                                <FiMapPin className="w-4 h-4" />
+                                                <span>Preferred meetup: {listing.meetingPoint}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -193,7 +238,7 @@ const SingleBook = () => {
                     <div className="flex border-b border-gray-700/50">
                         {[
                             { id: 'overview', label: 'Overview', icon: FiBookOpen },
-                            { id: 'similar', label: 'Similar Books', icon: FiTrendingUp }
+                            { id: 'similar', label: 'Similar Items', icon: FiTrendingUp }
                         ].map((tab) => (
                             <button
                                 key={tab.id}
@@ -214,37 +259,40 @@ const SingleBook = () => {
                     <div className="p-8">
                         {activeTab === 'overview' && (
                             <div className="space-y-6">
-                                <h3 className="text-2xl font-bold text-dark-text mb-4">Book Details</h3>
+                                <h3 className="text-2xl font-bold text-dark-text mb-4">Listing Details</h3>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                         <div className="flex justify-between">
                                             <span className="text-gray-400">Category:</span>
-                                            <span className="text-dark-text font-semibold">{book.category}</span>
+                                            <span className="text-dark-text font-semibold capitalize">{listing.category}</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="text-gray-400">Condition:</span>
-                                            <span className="text-green-400 font-semibold">Excellent</span>
+                                            <span className={`font-semibold capitalize ${getConditionColor(listing.condition).split(' ')[0]}`}>
+                                                {listing.condition}
+                                            </span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-400">Availability:</span>
-                                            <span className="text-dark-accent font-semibold">Available Now</span>
+                                            <span className="text-gray-400">Status:</span>
+                                            <span className="text-dark-accent font-semibold capitalize">{listing.status || 'active'}</span>
                                         </div>
                                     </div>
                                     <div className="space-y-4">
+                                        {listing.location && (
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Location:</span>
+                                                <span className="text-dark-text">{listing.location}</span>
+                                            </div>
+                                        )}
+                                        {listing.meetingPoint && (
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-400">Meetup Options:</span>
+                                                <span className="text-dark-text">{listing.meetingPoint}</span>
+                                            </div>
+                                        )}
                                         <div className="flex justify-between">
-                                            <span className="text-gray-400">Location:</span>
-                                            <span className="text-dark-text">Waterloo Campus</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-400">Meetup Options:</span>
-                                            <span className="text-dark-text">Campus, Tim Hortons, Library</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-400">Views:</span>
-                                            <span className="text-gray-300 flex items-center gap-1">
-                                                <HiOutlineEye className="w-4 h-4" />
-                                                247 views
-                                            </span>
+                                            <span className="text-gray-400">Listed:</span>
+                                            <span className="text-gray-300">{new Date(listing.createdAt).toLocaleDateString()}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -253,17 +301,17 @@ const SingleBook = () => {
 
                         {activeTab === 'similar' && (
                             <div className="space-y-6">
-                                <h3 className="text-2xl font-bold text-dark-text">Similar Books</h3>
+                                <h3 className="text-2xl font-bold text-dark-text">Similar Items</h3>
                                 <div className="grid md:grid-cols-3 gap-6">
-                                    {mockSimilarBooks.map((similarBook) => (
-                                        <div key={similarBook.id} className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 p-4 rounded-xl border border-gray-700/50 hover:border-dark-accent/50 transition-all duration-300 cursor-pointer group">
+                                    {mockSimilarListings.map((similarListing) => (
+                                        <div key={similarListing.id} className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 p-4 rounded-xl border border-gray-700/50 hover:border-dark-accent/50 transition-all duration-300 cursor-pointer group">
                                             <img
-                                                src={getImgUrl(similarBook.image)}
-                                                alt={similarBook.title}
+                                                src={similarListing.image}
+                                                alt={similarListing.title}
                                                 className="w-full h-48 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300"
                                             />
-                                            <h4 className="font-semibold text-dark-text mb-2">{similarBook.title}</h4>
-                                            <p className="text-dark-accent font-bold">${similarBook.price}</p>
+                                            <h4 className="font-semibold text-dark-text mb-2">{similarListing.title}</h4>
+                                            <p className="text-dark-accent font-bold">${similarListing.price}</p>
                                         </div>
                                     ))}
                                 </div>
