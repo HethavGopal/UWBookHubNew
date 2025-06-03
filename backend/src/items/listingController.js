@@ -55,10 +55,71 @@ const getSingleListing = async (req, res) => {
 }
 
 
+const getUserListings = async (req, res) => {
+    try {
+        const ownerUID = req.user.uid;
+        const listings = await Listing.find({ownerUID});
+        res.status(200).send({listings});
+    } catch (error) {
+        console.log("Error in fetching user listings", error);
+        res.status(500).send({message: "Internal server error"});
+    }
+}
+
+const deleteListing = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ownerUID = req.user.uid;
+        
+        // Find the listing and check if the user owns it
+        const listing = await Listing.findById(id);
+        if (!listing) {
+            return res.status(404).send({message: "Listing not found"});
+        }
+        
+        if (listing.ownerUID !== ownerUID) {
+            return res.status(403).send({message: "Not authorized to delete this listing"});
+        }
+        
+        await Listing.findByIdAndDelete(id);
+        res.status(200).send({message: "Listing deleted successfully"});
+    } catch (error) {
+        console.log("Error in deleting listing", error);
+        res.status(500).send({message: "Internal server error"});
+    }
+}
+
+const updateListing = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ownerUID = req.user.uid;
+        const updateData = req.body;
+        
+        // Find the listing and check if the user owns it
+        const listing = await Listing.findById(id);
+        if (!listing) {
+            return res.status(404).send({message: "Listing not found"});
+        }
+        
+        if (listing.ownerUID !== ownerUID) {
+            return res.status(403).send({message: "Not authorized to update this listing"});
+        }
+        
+        const updatedListing = await Listing.findByIdAndUpdate(id, updateData, { new: true });
+        res.status(200).send({message: "Listing updated successfully", listing: updatedListing});
+    } catch (error) {
+        console.log("Error in updating listing", error);
+        res.status(500).send({message: "Internal server error"});
+    }
+}
+
 module.exports = {
     createListing,
     getAllListings,
-    getSingleListing
+    getSingleListing,
+    getUserListings,
+    deleteListing,
+    updateListing
 }
 
 

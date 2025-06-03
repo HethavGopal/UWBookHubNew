@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { FiHeart, FiShare2, FiUser, FiMapPin, FiMail, FiPhone, FiBookOpen, FiTrendingUp } from 'react-icons/fi'
+import { FiHeart, FiShare2, FiUser, FiMapPin, FiMail, FiPhone, FiBookOpen, FiTrendingUp, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { BsShield } from 'react-icons/bs'
 import { HiOutlineEye } from 'react-icons/hi'
 import getBaseUrl from '../../utils/baseURL'
@@ -13,6 +13,7 @@ const SingleBook = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [isFavorited, setIsFavorited] = useState(false);
     const [showContactInfo, setShowContactInfo] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Scroll to top immediately when component mounts or ID changes
     useEffect(() => {
@@ -21,6 +22,8 @@ const SingleBook = () => {
             left: 0,
             behavior: 'instant'
         });
+        // Reset image index when ID changes
+        setCurrentImageIndex(0);
     }, [id]);
 
     useEffect(() => {
@@ -107,22 +110,80 @@ const SingleBook = () => {
                 <div className="bg-gradient-to-b from-gray-900/95 to-gray-800/95 backdrop-blur-md rounded-2xl p-8 border border-gray-700/50 shadow-2xl mb-8">
                     <div className="grid lg:grid-cols-2 gap-8">
                         {/* Image Section */}
-                        <div className="flex items-center justify-center p-6 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl">
-                            <div className="relative group">
-                                <img
-                                    src={listing.images && listing.images.length > 0 ? listing.images[0] : '/placeholder-book.jpg'}
-                                    alt={listing.title}
-                                    className="max-h-[500px] max-w-full object-contain rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
-                                />
-                                <div className="absolute top-4 right-4 bg-dark-accent text-black px-3 py-1 rounded-full text-sm font-bold">
-                                    {listing.category}
-                                </div>
-                                {/* Condition badge */}
-                                <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-bold ${getConditionColor(listing.condition)}`}>
-                                    <BsShield className="inline w-3 h-3 mr-1" />
-                                    {listing.condition}
+                        <div className="flex flex-col p-6 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl relative min-h-[650px]">
+                            {/* Category badge - top right of container */}
+                            <div className="absolute top-2 right-2 bg-dark-accent text-black px-3 py-1 rounded-full text-sm font-bold z-10">
+                                {listing.category}
+                            </div>
+                            
+                            {/* Condition badge - top left of container */}
+                            <div className={`absolute top-2 left-2 px-3 py-1 rounded-full text-sm font-bold z-10 ${getConditionColor(listing.condition)}`}>
+                                <BsShield className="inline w-3 h-3 mr-1" />
+                                {listing.condition}
+                            </div>
+                            
+                            {/* Navigation arrows at container edges - only show if multiple images */}
+                            {listing.images && listing.images.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={() => setCurrentImageIndex(prev => prev === 0 ? listing.images.length - 1 : prev - 1)}
+                                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-dark-accent/90 hover:bg-dark-accent text-black p-2.5 rounded-full transition-all duration-300 shadow-lg z-10"
+                                    >
+                                        <FiChevronLeft className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentImageIndex(prev => prev === listing.images.length - 1 ? 0 : prev + 1)}
+                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-dark-accent/90 hover:bg-dark-accent text-black p-2.5 rounded-full transition-all duration-300 shadow-lg z-10"
+                                    >
+                                        <FiChevronRight className="w-5 h-5" />
+                                    </button>
+                                </>
+                            )}
+                            
+                            {/* Main image container - centered */}
+                            <div className="flex-1 flex items-center justify-center py-4">
+                                <div className="relative">
+                                    <img
+                                        src={listing.images && listing.images.length > 0 ? listing.images[currentImageIndex] : '/placeholder-book.jpg'}
+                                        alt={listing.title}
+                                        className="max-h-[500px] max-w-full object-contain rounded-xl shadow-2xl transition-all duration-300 border border-gray-600/30"
+                                    />
                                 </div>
                             </div>
+                            
+                            {/* Image counter - between main image and thumbnails */}
+                            {listing.images && listing.images.length > 1 && (
+                                <div className="flex justify-center mb-2">
+                                    <div className="bg-dark-accent/90 text-black px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+                                        {currentImageIndex + 1} / {listing.images.length}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {/* Thumbnail strip at the very bottom */}
+                            {listing.images && listing.images.length > 1 && (
+                                <div className="mt-auto pt-4 border-t border-gray-600/30">
+                                    <div className="flex gap-2 justify-center max-w-full overflow-x-auto pb-1">
+                                        {listing.images.map((image, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => setCurrentImageIndex(index)}
+                                                className={`flex-shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-all duration-300 ${
+                                                    index === currentImageIndex 
+                                                        ? 'border-dark-accent shadow-md ring-1 ring-dark-accent/50' 
+                                                        : 'border-gray-500/50 hover:border-gray-400 hover:shadow-sm'
+                                                }`}
+                                            >
+                                                <img
+                                                    src={image}
+                                                    alt={`${listing.title} - Image ${index + 1}`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Content Section */}

@@ -11,10 +11,8 @@ import { useSelector } from 'react-redux';
 import { useAuth } from '../context/AuthContext';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Orders', href: '/orders' },
+  { name: 'Dashboard', href: '/listings/user-listings' },
   { name: 'Sell Item', href: '/add-new-item' },
-  { name: 'Check Out', href: '/checkout' },
 ];
 
 const NavBar = () => {
@@ -97,6 +95,16 @@ const NavBar = () => {
                 isScrolled ? 'h-8 sm:h-10 md:h-12' : 'h-10 sm:h-12 md:h-16'
               }`} />
             </Link>
+
+            {/* Main Navigation Links */}
+            <div className="hidden md:flex items-center gap-6">
+              <Link 
+                to="/marketplace" 
+                className="text-dark-text hover:text-dark-accent transition-colors duration-300 font-medium"
+              >
+                Marketplace
+              </Link>
+            </div>
 
             {/* Enhanced Search bar with suggestions - Hidden on very small screens */}
             <div className={`relative search-container transition-all duration-500 ease-out hidden xs:block ${

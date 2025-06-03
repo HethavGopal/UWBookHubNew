@@ -15,8 +15,9 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import MangeBooks from "../pages/dashboard/manageBooks/MangeBooks.jsx";
 import AddBook from "../pages/dashboard/addBook/AddBook.jsx";
 import UpdateBook from "../pages/dashboard/editBook/UpdateBook.jsx";
-
+import UserDashboardPage from "../pages/userDashboard/UserDashboardPage.jsx"
 import AddNewItem from "../pages/user/AddNewItem.jsx";
+import MarketplacePage from "../pages/marketplace/MarketplacePage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         {
             path: "/",
             element: <Home/>
+        },
+        {
+            path: "/marketplace",
+            element: <MarketplacePage/>
         },
         {
             path: "/orders",
@@ -54,6 +59,10 @@ const router = createBrowserRouter([
         {
           path: "/listings/:id",
           element: <SingleBook/>
+        },
+        {
+          path: "/listings/user-listings",
+          element: <PrivateRouter><UserDashboardPage/></PrivateRouter>
         },
         {
           path: "/admin",
@@ -93,4 +102,4 @@ const router = createBrowserRouter([
   }
 });
 
-  export default router;
+export default router;
