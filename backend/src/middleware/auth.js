@@ -2,96 +2,151 @@
 // TODO: Install firebase-admin and configure properly for production
 
 const admin = require('firebase-admin');
+const { createModuleLogger } = require('../config/logger');
+const { createAuthError } = require('./errorHandler');
+
+const logger = createModuleLogger('auth');
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
-    try {
-        // Debug environment variables
-        console.log('🔥 Firebase Admin Setup:');
-        console.log('Project ID:', process.env.FIREBASE_PROJECT_ID);
-        console.log('Client Email:', process.env.FIREBASE_CLIENT_EMAIL);
-        console.log('Private Key exists:', !!process.env.FIREBASE_PRIVATE_KEY);
-        
-        // Parse private key properly (handle escaped newlines)
-        const privateKey = process.env.FIREBASE_PRIVATE_KEY
-            ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-            : null;
+  try {
+    // Parse private key properly (handle escaped newlines)
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY
+      ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+      : null;
 
-        if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
-            throw new Error('Missing required Firebase environment variables');
-        }
-
-        admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID,
-                privateKey: privateKey,
-                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            }),
-            projectId: process.env.FIREBASE_PROJECT_ID,
-        });
-        console.log('✅ Firebase Admin initialized successfully');
-    } catch (error) {
-        console.error('❌ Firebase Admin initialization failed:', error.message);
-        console.error('🔍 Check your .env file and ensure all Firebase variables are set correctly');
+    if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+      throw new Error('Missing required Firebase environment variables');
     }
+
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        privateKey: privateKey,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL
+      }),
+      projectId: process.env.FIREBASE_PROJECT_ID
+    });
+        
+    logger.info('Firebase Admin initialized successfully');
+  } catch (error) {
+    logger.error('Firebase Admin initialization failed', { 
+      error: error.message,
+      hasProjectId: !!process.env.FIREBASE_PROJECT_ID,
+      hasClientEmail: !!process.env.FIREBASE_CLIENT_EMAIL,
+      hasPrivateKey: !!process.env.FIREBASE_PRIVATE_KEY
+    });
+    throw error;
+  }
 }
 
 const auth = async (req, res, next) => {
+  try {
     const authHeader = req.headers['authorization'];
-    
+        
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ 
-            message: 'No valid authorization header provided',
-            error: 'MISSING_AUTH_HEADER'
-        });
+      logger.warn('Missing or invalid authorization header', {
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        path: req.path
+      });
+      throw createAuthError('No valid authorization header provided');
     }
 
     const token = authHeader.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ 
-            message: 'No token provided',
-            error: 'MISSING_TOKEN'
-        });
+      logger.warn('No token provided in authorization header', {
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        path: req.path
+      });
+      throw createAuthError('No token provided');
     }
 
-    try {
-       
-        const decodedToken = await admin.auth().verifyIdToken(token);
+    // Verify Firebase ID token
+    const decodedToken = await admin.auth().verifyIdToken(token);
         
-        req.user = {
-            uid: decodedToken.uid,                    // Real Firebase UID
-            email: decodedToken.email,                // Real user email
-            emailVerified: decodedToken.email_verified,
-            name: decodedToken.name,
-            picture: decodedToken.picture,
-            // Add other fields you need from the token
-        };
+    req.user = {
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      emailVerified: decodedToken.email_verified,
+      name: decodedToken.name,
+      picture: decodedToken.picture
+      // Add other fields you need from the token
+    };
         
-        console.log(`✅ User authenticated: ${req.user.email} (${req.user.uid})`);
-        next();
+    logger.info('User authenticated successfully', { 
+      uid: req.user.uid,
+      email: req.user.email,
+      emailVerified: req.user.emailVerified,
+      path: req.path
+    });
         
-    } catch (error) {
-        console.error('❌ Token verification failed:', error.message);
+    next();
         
-        // Handle different types of errors
-        if (error.code === 'auth/id-token-expired') {
-            return res.status(401).json({ 
-                message: 'Token has expired',
-                error: 'TOKEN_EXPIRED'
-            });
-        } else if (error.code === 'auth/invalid-id-token') {
-            return res.status(401).json({ 
-                message: 'Invalid token format',
-                error: 'INVALID_TOKEN'
-            });
-        } else {
-            return res.status(401).json({ 
-                message: 'Token verification failed',
-                error: 'VERIFICATION_FAILED'
-            });
-        }
+  } catch (error) {
+    logger.error('Token verification failed', { 
+      error: error.message,
+      ip: req.ip,
+      userAgent: req.get('User-Agent'),
+      path: req.path
+    });
+        
+    // Handle different types of Firebase auth errors
+    if (error.code === 'auth/id-token-expired') {
+      throw createAuthError('Token has expired');
+    } else if (error.code === 'auth/invalid-id-token') {
+      throw createAuthError('Invalid token format');
+    } else if (error.code === 'auth/argument-error') {
+      throw createAuthError('Invalid token');
+    } else if (error.statusCode) {
+      // If it's already an AppError, just pass it along
+      throw error;
+    } else {
+      throw createAuthError('Token verification failed');
     }
-}
+  }
+};
 
-module.exports = auth;
+// Optional authentication middleware (doesn't throw error if no token)
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers['authorization'];
+        
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return next();
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return next();
+    }
+
+    const decodedToken = await admin.auth().verifyIdToken(token);
+        
+    req.user = {
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      emailVerified: decodedToken.email_verified,
+      name: decodedToken.name,
+      picture: decodedToken.picture
+    };
+        
+    logger.info('Optional authentication successful', { 
+      uid: req.user.uid,
+      email: req.user.email
+    });
+        
+  } catch (error) {
+    logger.warn('Optional authentication failed', { 
+      error: error.message,
+      ip: req.ip
+    });
+    // Don't throw error for optional auth
+  }
+    
+  next();
+};
+
+module.exports = { auth, optionalAuth };

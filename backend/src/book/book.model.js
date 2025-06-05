@@ -1,39 +1,39 @@
 const mongoose = require('mongoose');
 
 const bookSchema = new mongoose.Schema({
-   title: {
+  title: {
     type: String,
-    required: true,
-   },
-   description:  {
+    required: true
+  },
+  description:  {
     type: String,
-    required: true,
-   },
-   category: {
+    required: true
+  },
+  category: {
     type: String,
-    required: true,
-   },
-   trending: {
-    type: Boolean,
-   },
-   coverImage: {
+    required: true
+  },
+  trending: {
+    type: Boolean
+  },
+  coverImage: {
     type: String,
-    required: true,
-   },
-   oldPrice: {
+    required: true
+  },
+  oldPrice: {
     type: Number,
-    required: true,
-   },
-   newPrice: {
+    required: true
+  },
+  newPrice: {
     type: Number,
-    required: true,
-   },
-   createdAt: {
+    required: true
+  },
+  createdAt: {
     type: Date,
     default: Date.now
-   }
+  }
 }, {
-    timestamps: true
+  timestamps: true
 });
 
 const Book = mongoose.model('Book', bookSchema);

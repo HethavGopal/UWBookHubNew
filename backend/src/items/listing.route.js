@@ -1,21 +1,88 @@
-const listing = require('./listing.model');
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth.js');
+const { auth, optionalAuth } = require('../middleware/auth.js');
+const { 
+  validateCreateListing, 
+  validateUpdateListing, 
+  validateListingQuery,
+  validateObjectId,
+  sanitizeHtml 
+} = require('../middleware/validation');
+const { asyncHandler } = require('../middleware/errorHandler');
 
-// Import Statements for controller
+// Import controller
 const controller = require('./listingController.js');
 
-router.post('/create-listing', auth, controller.createListing);
+// Create a new listing (authenticated users only)
+router.post('/create-listing', 
+  auth,
+  sanitizeHtml,
+  validateCreateListing,
+  asyncHandler(controller.createListing)
+);
 
-router.get('/get-all-listings', controller.getAllListings);
+// Get all listings (public, with optional auth for personalization)
+router.get('/get-all-listings', 
+  optionalAuth,
+  validateListingQuery,
+  asyncHandler(controller.getAllListings)
+);
 
-router.get('/user-listings', auth, controller.getUserListings);
+// Get single listing by ID (public)
+router.get('/:id', 
+  validateObjectId('id'),
+  asyncHandler(controller.getSingleListing)
+);
 
-router.get('/:id', controller.getSingleListing);
+// Update listing (authenticated users only, owner or admin)
+router.put('/:id', 
+  auth,
+  validateObjectId('id'),
+  sanitizeHtml,
+  validateUpdateListing,
+  asyncHandler(controller.updateListing)
+);
 
-router.put('/:id', auth, controller.updateListing);
+// Delete listing (authenticated users only, owner or admin)
+router.delete('/:id', 
+  auth,
+  validateObjectId('id'),
+  asyncHandler(controller.deleteListing)
+);
 
-router.delete('/:id', auth, controller.deleteListing);
+// Get listings by user (authenticated users only)
+router.get('/user/my-listings', 
+  auth,
+  validateListingQuery,
+  asyncHandler(controller.getUserListings)
+);
+
+// Search listings (public, with optional auth)
+router.get('/search/advanced', 
+  optionalAuth,
+  validateListingQuery,
+  asyncHandler(controller.searchListings)
+);
+
+// Get listings by category (public, with optional auth)
+router.get('/category/:category', 
+  optionalAuth,
+  validateListingQuery,
+  asyncHandler(controller.getListingsByCategory)
+);
+
+// Mark listing as sold (authenticated users only, owner or admin)
+router.patch('/:id/mark-sold', 
+  auth,
+  validateObjectId('id'),
+  asyncHandler(controller.markAsSold)
+);
+
+// Get featured/trending listings (public)
+router.get('/featured/trending', 
+  optionalAuth,
+  validateListingQuery,
+  asyncHandler(controller.getFeaturedListings)
+);
 
 module.exports = router;

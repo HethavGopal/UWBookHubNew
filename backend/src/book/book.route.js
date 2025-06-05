@@ -1,27 +1,30 @@
 // Api for book
-const Book = require('./book.model');
 const express = require('express');
 const router = express.Router();
+const { createModuleLogger } = require('../config/logger');
 
+const logger = createModuleLogger('books');
 
-// Import Statments for controller
-const controller = require('./bookcontroller');
-console.log('Imported controller:', controller); // Debug log
+// Import Statements for controller
+const {
+  postAbook, getAllBooks, getSingleBook, updateBook, deleteBook
+} = require('./bookcontroller');
 
-// Post Book:
-router.post('/create-book', controller.postAbook)
+logger.info('Book routes initialized');
 
-// Get all books:
-router.get("/", controller.getAllBooks)
+// Post a book
+router.post('/create-book', postAbook);
 
-// single book end point
-router.get("/:id", controller.getSingleBook)
+// Get all books
+router.get('/', getAllBooks);
 
+// Single book endpoint
+router.get('/:id', getSingleBook);
 
-// update a book endpoint
-router.put("/edit/:id", controller.updateBook)
+// Update a book endpoint
+router.put('/edit/:id', updateBook);
 
 // delete a book endpoint
-router.delete("/:id", controller.deleteBook)
+router.delete('/:id', deleteBook);
 
 module.exports = router;
