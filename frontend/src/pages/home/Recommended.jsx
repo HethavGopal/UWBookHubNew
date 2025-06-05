@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
+import { FiRefreshCw } from 'react-icons/fi'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/navigation';
 // Import Swiper styles
@@ -15,46 +16,55 @@ import getBaseUrl from '../../utils/baseURL';
 const Recommended = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchListings = async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      
+      const response = await fetch(`${getBaseUrl()}/api/listings/get-all-listings?sort=random&status=active&limit=18`);
+      const data = await response.json();
+      
+      // Extract listings array from response object
+      setBooks(data.listings || []);
+      console.log('Fetched random trending listings:', data.listings);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+      setBooks([]); // Set empty array on error
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchListings = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${getBaseUrl()}/api/listings/get-all-listings`);
-        const data = await response.json();
-        
-        if (isMounted) {
-          // Extract listings array from response object
-          setBooks(data.listings || []);
-          console.log('Fetched listings:', data.listings);
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error('Error fetching listings:', error);
-          setBooks([]); // Set empty array on error
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
     fetchListings();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  const handleRefresh = () => {
+    fetchListings(true);
+  };
 
   return (
     <div className='py-8 sm:py-12 md:py-16 max-w-screen-2xl mx-auto px-3 sm:px-4'>
       <div className="mb-6 sm:mb-8 space-y-2 sm:space-y-3">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-1.5 sm:w-2 h-8 sm:h-10 bg-gradient-to-b from-dark-accent to-yellow-300 rounded-full"></div>
-          <span className="text-dark-accent font-bold text-xs sm:text-sm tracking-wider uppercase">Popular Picks</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-1.5 sm:w-2 h-8 sm:h-10 bg-gradient-to-b from-dark-accent to-yellow-300 rounded-full"></div>
+            <span className="text-dark-accent font-bold text-xs sm:text-sm tracking-wider uppercase">Popular Picks</span>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-3 py-2 text-xs sm:text-sm bg-gradient-to-r from-gray-800/80 to-gray-700/80 hover:from-dark-accent/20 hover:to-yellow-300/20 border border-gray-600/50 hover:border-dark-accent/50 rounded-lg transition-all duration-300 text-gray-300 hover:text-dark-accent disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FiRefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{refreshing ? 'Refreshing...' : 'Shuffle'}</span>
+          </button>
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-dark-text via-gray-200 to-dark-text bg-clip-text text-transparent">Trending Items</h2>
       </div>

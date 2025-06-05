@@ -1,0 +1,175 @@
+version: '3.8'
+
+services:
+  # ==============================================================================
+  # Backend API Service
+  # ==============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: uwaterloo-marketplace-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DB_URL=mongodb://mongo:27017/uwaterloo-marketplace
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_logs:/app/logs
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - marketplace-network
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ==============================================================================
+  # Frontend Service
+  # ==============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: uwaterloo-marketplace-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - marketplace-network
+
+  # ==============================================================================
+  # MongoDB Database
+  # ==============================================================================
+  mongo:
+    image: mongo:6.0
+    container_name: uwaterloo-marketplace-mongo
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-changeme}
+      - MONGO_INITDB_DATABASE=uwaterloo-marketplace
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+      - ./backend/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - marketplace-network
+    command: mongod --auth
+
+  # ==============================================================================
+  # Redis Cache
+  # ==============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: uwaterloo-marketplace-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-changeme}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - marketplace-network
+
+  # ==============================================================================
+  # Nginx Reverse Proxy
+  # ==============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: uwaterloo-marketplace-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_cache:/var/cache/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - marketplace-network
+
+  # ==============================================================================
+  # Monitoring (Optional)
+  # ==============================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: uwaterloo-marketplace-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - marketplace-network
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: uwaterloo-marketplace-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - marketplace-network
+    profiles:
+      - monitoring
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  mongo_data:
+    driver: local
+  mongo_config:
+    driver: local
+  redis_data:
+    driver: local
+  backend_uploads:
+    driver: local
+  backend_logs:
+    driver: local
+  nginx_cache:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  marketplace-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

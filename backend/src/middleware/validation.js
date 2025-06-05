@@ -71,7 +71,7 @@ const schemas = {
       'sports', 'gadgets', 'transport', 'misc'
     ).default('all'),
     condition: Joi.string().valid('all', 'new', 'like-new', 'good', 'fair').default('all'),
-    sort: Joi.string().valid('newest', 'oldest', 'price-low', 'price-high', 'title').default('newest'),
+    sort: Joi.string().valid('newest', 'oldest', 'price-low', 'price-high', 'title', 'random').default('newest'),
     search: Joi.string().max(100).optional().trim(),
     minPrice: Joi.number().min(0).max(99999).optional(),
     maxPrice: Joi.number().min(0).max(100000).optional(),

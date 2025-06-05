@@ -1,13 +1,18 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build:production": "NODE_ENV=production vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext js,jsx --fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.1",
@@ -25,7 +30,9 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.0",
     "sweetalert2": "^11.21.0",
-    "swiper": "^11.2.6"
+    "swiper": "^11.2.6",
+    "react-error-boundary": "^4.0.11",
+    "react-helmet-async": "^2.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -39,6 +46,14 @@
     "globals": "^16.0.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "jsdom": "^23.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

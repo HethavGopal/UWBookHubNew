@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BookCard from '../books/BookCard'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,11 +9,53 @@ import 'swiper/css/pagination';
 
 // import required modules
 import { Pagination, Navigation } from 'swiper/modules';
-import { useFetchAllBooksQuery } from '../../redux/features/cart/booksAPI';
+import getBaseUrl from '../../utils/baseURL';
 
 const TopSellers = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
-  const { data: books = [], isLoading, error } = useFetchAllBooksQuery()
+  const [books, setBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchListings = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch(`${getBaseUrl()}/api/listings/get-all-listings?sort=newest&status=active&limit=20`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch listings');
+        }
+        
+        const data = await response.json();
+        
+        if (isMounted) {
+          // Extract listings array from response object and ensure it's sorted by newest first
+          setBooks(data.listings || []);
+          console.log('Fetched listings for Recently Posted:', data.listings);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching listings:', error);
+          setError(error);
+          setBooks([]); // Set empty array on error
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchListings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   
  
 
