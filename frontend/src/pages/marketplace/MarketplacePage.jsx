@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import getBaseUrl from '../../utils/baseURL'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { 
   FiSearch, 
   FiFilter, 
@@ -24,6 +24,7 @@ import { HiOutlineAdjustments } from 'react-icons/hi'
 
 const MarketplacePage = () => {
   const { currentUser } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [listings, setListings] = useState([])
   const [filteredListings, setFilteredListings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -71,6 +72,69 @@ const MarketplacePage = () => {
     { value: 'good', label: 'Good', color: 'text-yellow-400 bg-yellow-400/20' },
     { value: 'fair', label: 'Fair', color: 'text-orange-400 bg-orange-400/20' }
   ]
+
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    const categoryParam = searchParams.get('category')
+    const searchParam = searchParams.get('search') 
+    const conditionParam = searchParams.get('condition')
+    const sortParam = searchParams.get('sort')
+
+    if (categoryParam && categories.find(cat => cat.value === categoryParam)) {
+      setSelectedCategory(categoryParam)
+    }
+    if (searchParam) {
+      setSearchTerm(searchParam)
+    }
+    if (conditionParam && conditions.find(cond => cond.value === conditionParam)) {
+      setSelectedCondition(conditionParam)
+    }
+    if (sortParam) {
+      setSortBy(sortParam)
+    }
+    
+    // Scroll to top when page loads or parameters change
+    window.scrollTo(0, 0)
+  }, [])
+
+  // Update URL when filters change
+  const updateSearchParams = (newParams) => {
+    const params = new URLSearchParams(searchParams)
+    
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value && value !== 'all' && value !== '') {
+        params.set(key, value)
+      } else {
+        params.delete(key)
+      }
+    })
+    
+    setSearchParams(params)
+  }
+
+  // Update category filter and URL
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category)
+    updateSearchParams({ category })
+  }
+
+  // Update search term and URL
+  const handleSearchChange = (search) => {
+    setSearchTerm(search)
+    updateSearchParams({ search })
+  }
+
+  // Update condition filter and URL
+  const handleConditionChange = (condition) => {
+    setSelectedCondition(condition)
+    updateSearchParams({ condition })
+  }
+
+  // Update sort and URL
+  const handleSortChange = (sort) => {
+    setSortBy(sort)
+    updateSearchParams({ sort })
+  }
 
   // Fetch all listings
   const fetchAllListings = async () => {
@@ -201,6 +265,8 @@ const MarketplacePage = () => {
     setPriceRange({ min: '', max: '' })
     setSelectedLocation('')
     setSortBy('newest')
+    // Clear URL parameters
+    setSearchParams(new URLSearchParams())
   }
 
   // Pagination
@@ -282,7 +348,7 @@ const MarketplacePage = () => {
                 type="text"
                 placeholder="Search items, descriptions, categories..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-dark-text placeholder-gray-400 focus:outline-none focus:border-dark-accent transition-colors duration-200 text-sm sm:text-base"
               />
             </div>
@@ -294,7 +360,7 @@ const MarketplacePage = () => {
                 {categories.slice(0, 4).map(category => (
                   <button
                     key={category.value}
-                    onClick={() => setSelectedCategory(category.value)}
+                    onClick={() => handleCategoryChange(category.value)}
                     className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                       selectedCategory === category.value
                         ? 'bg-dark-accent text-black'
@@ -346,7 +412,7 @@ const MarketplacePage = () => {
                 {/* Sort */}
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                  onChange={(e) => handleSortChange(e.target.value)}
                   className="px-2 sm:px-3 py-1.5 bg-gray-700/50 border border-gray-600 rounded-lg text-dark-text text-xs sm:text-sm focus:outline-none focus:border-dark-accent transition-colors duration-200 min-w-0"
                 >
                   <option value="newest">Newest</option>
@@ -368,7 +434,7 @@ const MarketplacePage = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
                   <select
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
                     className="w-full px-3 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-dark-text focus:outline-none focus:border-dark-accent transition-colors duration-200 text-sm"
                   >
                     {categories.map(cat => (
@@ -382,7 +448,7 @@ const MarketplacePage = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Condition</label>
                   <select
                     value={selectedCondition}
-                    onChange={(e) => setSelectedCondition(e.target.value)}
+                    onChange={(e) => handleConditionChange(e.target.value)}
                     className="w-full px-3 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-dark-text focus:outline-none focus:border-dark-accent transition-colors duration-200 text-sm"
                   >
                     {conditions.map(condition => (

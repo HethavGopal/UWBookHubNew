@@ -1,9 +1,28 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import bannerImg from "../../assets/banner.png"
 
 
 const Banner = () => {
+  const navigate = useNavigate()
+
+  const handleBrowseMarketplace = () => {
+    navigate('/marketplace')
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 100)
+  }
+
+  const handleStartSelling = () => {
+    navigate('/add-new-item')
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 100)
+  }
+
   return (
     <div className='bg-gradient-to-br from-gray-900/80 via-black/60 to-gray-800/80 backdrop-blur-sm shadow-2xl rounded-2xl sm:rounded-3xl mb-6 sm:mb-8 border border-gray-700/50 overflow-hidden relative mx-2 sm:mx-0'>
       {/* Animated background gradient */}
@@ -37,10 +56,16 @@ const Banner = () => {
             <span className="hidden sm:inline">The ultimate marketplace for University of Waterloo students. Buy and sell textbooks, electronics, dorm essentials, and more. Connect with fellow Warriors and find great deals right on campus!</span>
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start">
-              <button className='bg-gradient-to-r from-dark-accent to-yellow-300 text-black hover:from-yellow-300 hover:to-dark-accent px-6 sm:px-8 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-dark-accent/25 transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 w-full sm:w-auto'>
+              <button 
+                onClick={handleBrowseMarketplace}
+                className='bg-gradient-to-r from-dark-accent to-yellow-300 text-black hover:from-yellow-300 hover:to-dark-accent px-6 sm:px-8 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-dark-accent/25 transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 w-full sm:w-auto'
+              >
                 Browse Marketplace
               </button>
-              <button className='border-2 border-dark-accent/50 text-dark-accent hover:bg-dark-accent/10 px-6 sm:px-8 py-3 rounded-xl font-bold text-sm hover:border-dark-accent transition-all duration-300 hover:scale-105 w-full sm:w-auto'>
+              <button 
+                onClick={handleStartSelling}
+                className='border-2 border-dark-accent/50 text-dark-accent hover:bg-dark-accent/10 px-6 sm:px-8 py-3 rounded-xl font-bold text-sm hover:border-dark-accent transition-all duration-300 hover:scale-105 w-full sm:w-auto'
+              >
                 Start Selling
               </button>
             </div>

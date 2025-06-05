@@ -1,8 +1,19 @@
 import React from 'react'
 import { BiSearch, BiChat, BiPackage, BiDollarCircle, BiGroup, BiShield, BiBookOpen } from 'react-icons/bi'
 import { FiArrowRight } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 
 const HowItWorks = () => {
+  const navigate = useNavigate()
+
+  const handleStartSavingClick = () => {
+    navigate('/marketplace')
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 100)
+  }
+
   const steps = [
     {
       step: '01',
@@ -146,7 +157,10 @@ const HowItWorks = () => {
 
         {/* CTA */}
         <div className="text-center mt-8 sm:mt-10 md:mt-12">
-          <button className="bg-gradient-to-r from-dark-accent to-yellow-300 text-black hover:from-yellow-300 hover:to-dark-accent px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg hover:shadow-dark-accent/25 transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-xs sm:max-w-none">
+          <button 
+            onClick={handleStartSavingClick}
+            className="bg-gradient-to-r from-dark-accent to-yellow-300 text-black hover:from-yellow-300 hover:to-dark-accent px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg hover:shadow-dark-accent/25 transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-xs sm:max-w-none"
+          >
             Start Saving Today
           </button>
         </div>

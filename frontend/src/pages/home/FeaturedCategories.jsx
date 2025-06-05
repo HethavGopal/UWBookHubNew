@@ -1,50 +1,77 @@
 import React from 'react'
 import { BiBook, BiDesktop, BiMobile, BiHome, BiUser, BiCar } from 'react-icons/bi'
 import { MdSportsSoccer, MdLocalGroceryStore } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 
 const FeaturedCategories = () => {
+  const navigate = useNavigate()
+
   const categories = [
     {
       name: 'Textbooks',
       icon: BiBook,
-      description: 'Course books, study guides, supplies'
+      description: 'Course books, study guides, supplies',
+      marketplaceCategory: 'textbooks'
     },
     {
       name: 'Electronics',
       icon: BiDesktop,
-      description: 'Laptops, tablets, accessories'
+      description: 'Laptops, tablets, accessories',
+      marketplaceCategory: 'electronics'
     },
     {
       name: 'Dorm Essentials',
       icon: BiHome,
-      description: 'Furniture, decor, appliances'
+      description: 'Furniture, decor, appliances',
+      marketplaceCategory: 'dorm'
     },
     {
       name: 'Clothing',
       icon: BiUser,
-      description: 'Waterloo gear, casual wear'
+      description: 'Waterloo gear, casual wear',
+      marketplaceCategory: 'clothing'
     },
     {
       name: 'Sports & Recreation',
       icon: MdSportsSoccer,
-      description: 'Equipment, gear, tickets'
+      description: 'Equipment, gear, tickets',
+      marketplaceCategory: 'sports'
     },
     {
       name: 'Phones & Gadgets',
       icon: BiMobile,
-      description: 'Smartphones, earbuds, chargers'
+      description: 'Smartphones, earbuds, chargers',
+      marketplaceCategory: 'gadgets'
     },
     {
       name: 'Transportation',
       icon: BiCar,
-      description: 'Bikes, scooters, bus passes'
+      description: 'Bikes, scooters, bus passes',
+      marketplaceCategory: 'transport'
     },
     {
       name: 'Miscellaneous',
       icon: MdLocalGroceryStore,
-      description: 'Food, personal items, other'
+      description: 'Food, personal items, other',
+      marketplaceCategory: 'misc'
     }
   ]
+
+  const handleCategoryClick = (marketplaceCategory) => {
+    navigate(`/marketplace?category=${marketplaceCategory}`)
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 100)
+  }
+
+  const handleBrowseAllClick = () => {
+    navigate('/marketplace')
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 100)
+  }
 
   return (
     <section className="py-12 sm:py-16 md:py-20 max-w-screen-2xl mx-auto px-3 sm:px-4">
@@ -71,6 +98,7 @@ const FeaturedCategories = () => {
               key={category.name}
               className="group cursor-pointer"
               style={{ animationDelay: `${index * 100}ms` }}
+              onClick={() => handleCategoryClick(category.marketplaceCategory)}
             >
               <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-700/50 hover:border-dark-accent/30 transition-all duration-500 hover:shadow-2xl hover:shadow-dark-accent/10 hover:-translate-y-1 sm:hover:-translate-y-3 h-full">
                 <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
@@ -100,7 +128,10 @@ const FeaturedCategories = () => {
 
       {/* Call to action */}
       <div className="text-center mt-8 sm:mt-10 md:mt-12 px-4 sm:px-0">
-        <button className="bg-gradient-to-r from-dark-accent to-yellow-300 text-black hover:from-yellow-300 hover:to-dark-accent px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg hover:shadow-dark-accent/25 transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-xs sm:max-w-none">
+        <button 
+          onClick={handleBrowseAllClick}
+          className="bg-gradient-to-r from-dark-accent to-yellow-300 text-black hover:from-yellow-300 hover:to-dark-accent px-6 sm:px-8 py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg hover:shadow-dark-accent/25 transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 w-full sm:w-auto max-w-xs sm:max-w-none"
+        >
           Browse All Categories
         </button>
       </div>
