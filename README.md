@@ -2,13 +2,31 @@
 
 UWBookHub is a full-stack used book marketplace built for University of Waterloo students to easily buy and sell textbooks.
 
-> ⚠️ **Note:** This project is currently down for updates. It will be back online soon with improved features and performance.
-
----
-
 ## Overview
 
 UWBookHub streamlines the textbook exchange process on campus, providing a platform where students can list, search for, and purchase used books. The platform focuses on affordability, simplicity, and peer-to-peer transactions.
+
+## 🚀 Quick Start
+
+### Development Setup
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd UWBookHubNew
+
+# Set up environment files
+cp backend/env.example backend/.env
+# Edit backend/.env with your configuration
+
+# Start all services with Docker
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+```
+
+### Production Deployment
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete Docker deployment instructions.
 
 ---
 
