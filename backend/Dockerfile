@@ -70,4 +70,35 @@ CMD ["node", "index.js"]
 # ==============================================================================
 LABEL maintainer="UWaterloo Marketplace Team"
 LABEL version="1.0.0"
-LABEL description="UWaterloo Student Marketplace Backend API" 
+LABEL description="UWaterloo Student Marketplace Backend API"
+
+# Simple backend-only Dockerfile for Railway
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Set memory-friendly npm config
+RUN npm config set fund false && npm config set audit false
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with aggressive memory optimization
+RUN npm install --omit=dev --no-audit --no-fund --maxsockets 1 --ignore-scripts
+
+# Copy source code
+COPY . .
+
+# Create uploads directory
+RUN mkdir -p uploads
+
+# Expose port
+EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:5000/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+
+# Start the application
+CMD ["node", "index.js"] 

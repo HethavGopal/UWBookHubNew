@@ -19,6 +19,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const compression = require('compression');
+const path = require('path');
 
 // Import configurations
 const { connectDB } = require('./src/config/database');
@@ -77,6 +78,9 @@ app.use('/api/books', bookRoute);
 app.use('/api/orders', orderRoute);
 app.use('/api/listings', rateLimiters.createListing, listingRoute);
 app.use('/api/admin', adminRoute);
+
+// Note: Frontend is deployed separately (Vercel/Netlify)
+// Backend only serves API endpoints
 
 // Root endpoint
 app.get('/', (req, res) => {
