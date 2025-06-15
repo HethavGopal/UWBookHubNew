@@ -66,7 +66,93 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-console.log('Routes configured');
+console.log('Basic routes configured');
+
+// Essential API endpoints for frontend
+app.get('/api/listings/get-all-listings', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Listings endpoint working',
+    data: [],
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api/listings/user-listings', (req, res) => {
+  res.json({
+    success: true,
+    message: 'User listings endpoint working',
+    data: [],
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post('/api/listings/create-listing', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Create listing endpoint working',
+    data: { id: 'test-listing-id' },
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api/books', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Books endpoint working',
+    data: [],
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api/admin', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Admin endpoint working',
+    data: { stats: 'placeholder' },
+    timestamp: new Date().toISOString()
+  });
+});
+
+console.log('API endpoints configured');
+
+// Handle dynamic listing IDs - put this AFTER specific routes
+app.get('/api/listings/*', (req, res) => {
+  const listingId = req.path.split('/').pop();
+  res.json({
+    success: true,
+    message: 'Single listing endpoint working',
+    data: {
+      id: listingId,
+      title: 'Sample Listing',
+      description: 'This is a test listing',
+      price: 50,
+      category: 'textbooks',
+      condition: 'good',
+      status: 'active'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Catch-all for other missing API endpoints
+app.use('/api/*', (req, res) => {
+  res.json({
+    success: false,
+    message: `API endpoint ${req.path} is not implemented in simplified version`,
+    availableEndpoints: [
+      '/api/health',
+      '/api/listings/get-all-listings',
+      '/api/listings/user-listings',
+      '/api/listings/{id}',
+      '/api/books',
+      '/api/admin'
+    ],
+    timestamp: new Date().toISOString()
+  });
+});
+
+console.log('All routes configured');
 
 // Test database connection
 const mongoose = require('mongoose');
