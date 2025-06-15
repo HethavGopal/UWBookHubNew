@@ -52,6 +52,70 @@ if (process.env.DB_URL) {
   console.log('✗ DB_URL not provided');
 }
 
+// Sample data for testing
+const sampleListings = [
+  {
+    id: '1',
+    title: 'Calculus Textbook - Early Transcendentals',
+    description: 'Used calculus textbook in good condition. Perfect for MATH 137/138.',
+    price: 120,
+    category: 'textbooks',
+    condition: 'good',
+    status: 'active',
+    imageUrl: 'https://via.placeholder.com/300x400/4F46E5/white?text=Calculus+Book',
+    seller: 'John Doe',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '2',
+    title: 'Programming Laptop - ThinkPad X1',
+    description: 'Excellent laptop for CS students. Intel i7, 16GB RAM, 512GB SSD.',
+    price: 800,
+    category: 'electronics',
+    condition: 'excellent',
+    status: 'active',
+    imageUrl: 'https://via.placeholder.com/300x400/059669/white?text=Laptop',
+    seller: 'Jane Smith',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '3',
+    title: 'Physics Lab Manual',
+    description: 'Required lab manual for PHYS 111/112. Barely used.',
+    price: 45,
+    category: 'textbooks',
+    condition: 'like-new',
+    status: 'active',
+    imageUrl: 'https://via.placeholder.com/300x400/DC2626/white?text=Physics+Manual',
+    seller: 'Mike Johnson',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '4',
+    title: 'Scientific Calculator TI-84',
+    description: 'TI-84 Plus CE calculator. Great for math and engineering courses.',
+    price: 80,
+    category: 'electronics',
+    condition: 'good',
+    status: 'active',
+    imageUrl: 'https://via.placeholder.com/300x400/7C3AED/white?text=Calculator',
+    seller: 'Sarah Wilson',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: '5',
+    title: 'Organic Chemistry Textbook',
+    description: 'Comprehensive organic chemistry textbook with solutions manual.',
+    price: 150,
+    category: 'textbooks',
+    condition: 'fair',
+    status: 'active',
+    imageUrl: 'https://via.placeholder.com/300x400/EA580C/white?text=Chemistry+Book',
+    seller: 'Alex Chen',
+    createdAt: new Date().toISOString()
+  }
+];
+
 console.log('\n=== Starting Enhanced HTTP Server ===');
 const http = require('http');
 const url = require('url');
@@ -77,11 +141,12 @@ const server = http.createServer((req, res) => {
   if (pathname === '/') {
     res.writeHead(200);
     res.end(JSON.stringify({
-      message: 'UWaterloo Marketplace API - Enhanced Diagnostic',
+      message: 'UWaterloo Marketplace API - Enhanced with Sample Data',
       version: '1.0.0',
       status: 'active',
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
+      sampleDataCount: sampleListings.length
     }));
   } else if (pathname === '/health') {
     res.writeHead(200);
@@ -98,11 +163,24 @@ const server = http.createServer((req, res) => {
       timestamp: new Date().toISOString()
     }));
   } else if (pathname === '/api/listings/get-all-listings') {
+    // Apply query filters if provided
+    const query = parsedUrl.query;
+    let filteredListings = [...sampleListings];
+    
+    if (query.category && query.category !== 'all') {
+      filteredListings = filteredListings.filter(item => item.category === query.category);
+    }
+    
+    if (query.limit) {
+      filteredListings = filteredListings.slice(0, parseInt(query.limit));
+    }
+    
     res.writeHead(200);
     res.end(JSON.stringify({
       success: true,
-      message: 'Listings endpoint working',
-      data: [],
+      message: 'Sample listings retrieved',
+      listings: filteredListings,
+      total: filteredListings.length,
       timestamp: new Date().toISOString()
     }));
   } else if (pathname === '/api/listings/user-listings') {
@@ -110,32 +188,26 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({
       success: true,
       message: 'User listings endpoint working',
-      data: [],
+      listings: sampleListings.slice(0, 2), // Show first 2 as user's listings
       timestamp: new Date().toISOString()
     }));
   } else if (pathname.startsWith('/api/listings/') && pathname !== '/api/listings/get-all-listings' && pathname !== '/api/listings/user-listings') {
     const listingId = pathname.split('/').pop();
+    const listing = sampleListings.find(item => item.id === listingId) || sampleListings[0];
     res.writeHead(200);
     res.end(JSON.stringify({
       success: true,
-      message: 'Single listing endpoint working',
-      data: {
-        id: listingId,
-        title: 'Sample Listing',
-        description: 'This is a test listing',
-        price: 50,
-        category: 'textbooks',
-        condition: 'good',
-        status: 'active'
-      },
+      message: 'Single listing retrieved',
+      listings: listing,
       timestamp: new Date().toISOString()
     }));
   } else if (pathname === '/api/books') {
+    const books = sampleListings.filter(item => item.category === 'textbooks');
     res.writeHead(200);
     res.end(JSON.stringify({
       success: true,
       message: 'Books endpoint working',
-      data: [],
+      listings: books,
       timestamp: new Date().toISOString()
     }));
   } else if (pathname === '/api/admin') {
@@ -143,7 +215,12 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({
       success: true,
       message: 'Admin endpoint working',
-      data: { stats: 'placeholder' },
+      listings: { 
+        totalListings: sampleListings.length,
+        activeListings: sampleListings.filter(item => item.status === 'active').length,
+        categories: ['textbooks', 'electronics'],
+        stats: 'Sample admin data'
+      },
       timestamp: new Date().toISOString()
     }));
   } else if (pathname.startsWith('/api/')) {
@@ -175,6 +252,7 @@ const server = http.createServer((req, res) => {
 const port = process.env.PORT || 5000;
 server.listen(port, () => {
   console.log(`✓ Enhanced HTTP server running on port ${port}`);
+  console.log(`✓ Sample data loaded: ${sampleListings.length} listings`);
   console.log('=== Diagnostic Complete ===');
 });
 
