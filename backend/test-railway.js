@@ -127,6 +127,7 @@ const server = http.createServer((req, res) => {
   // Set CORS headers for Vercel deployment
   const origin = req.headers.origin;
   const allowedOrigins = [
+    'https://uwbookhub.vercel.app',
     'https://uw-book-hub-4a2ipkl8d-hethavgopals-projects.vercel.app',
     'https://uw-bookhub-new.vercel.app',
     'http://localhost:3000',

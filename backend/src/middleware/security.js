@@ -123,6 +123,7 @@ const getCorsOptions = () => {
     'http://localhost:3000',
     'http://localhost:5173',
     'http://localhost:5174',
+    'https://uwbookhub.vercel.app',
     'https://uw-bookhub-new.vercel.app',
     'https://uwaterloomarketplace.vercel.app',
     // Add your specific Vercel deployment URL
