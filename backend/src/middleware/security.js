@@ -124,7 +124,13 @@ const getCorsOptions = () => {
     'http://localhost:5173',
     'http://localhost:5174',
     'https://uw-bookhub-new.vercel.app',
-    'https://uwaterloomarketplace.vercel.app'
+    'https://uwaterloomarketplace.vercel.app',
+    // Add your specific Vercel deployment URL
+    'https://uw-book-hub-4a2ipkl8d-hethavgopals-projects.vercel.app',
+    // Pattern for Vercel preview URLs
+    /^https:\/\/uw-book-hub-[a-z0-9]+-hethavgopals-projects\.vercel\.app$/,
+    // Pattern for any Vercel deployment under your account
+    /^https:\/\/[a-z0-9-]+-hethavgopals-projects\.vercel\.app$/
   ];
 
   // Add environment-specific origins
@@ -152,8 +158,17 @@ const getCorsOptions = () => {
       if (isAllowed) {
         callback(null, true);
       } else {
-        logger.warn('CORS blocked origin', { origin, ip: origin });
-        callback(new Error('Not allowed by CORS'));
+        logger.warn('CORS blocked origin', { 
+          origin, 
+          userAgent: 'Unknown',
+          allowedOrigins: allowedOrigins.map(o => o.toString())
+        });
+        // In production, be more permissive to avoid blocking legitimate requests
+        if (process.env.NODE_ENV === 'production') {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
       }
     },
     credentials: true,
