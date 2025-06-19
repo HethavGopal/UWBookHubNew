@@ -34,22 +34,41 @@ try {
 }
 
 console.log('\n=== Database Connection Test ===');
+let mongoose, Listing;
+let dbConnected = false;
+
 if (process.env.DB_URL) {
-  const mongoose = require('mongoose');
+  mongoose = require('mongoose');
+  
+  // Simple Listing model for the test server
+  const listingSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    price: Number,
+    category: String,
+    condition: String,
+    status: { type: String, default: 'active' },
+    imageUrl: String,
+    seller: String,
+    createdAt: { type: Date, default: Date.now }
+  });
+  
+  Listing = mongoose.model('Listing', listingSchema);
   
   mongoose.connect(process.env.DB_URL, {
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 10000
   })
   .then(() => {
-    console.log('✓ Database connection successful');
-    mongoose.connection.close();
+    console.log('✓ Database connection successful - Real data available');
+    dbConnected = true;
   })
   .catch((error) => {
     console.log('✗ Database connection failed:', error.message);
+    console.log('✓ Falling back to sample data');
   });
 } else {
-  console.log('✗ DB_URL not provided');
+  console.log('✗ DB_URL not provided - Using sample data');
 }
 
 // Sample data for testing
@@ -175,26 +194,69 @@ const server = http.createServer((req, res) => {
       timestamp: new Date().toISOString()
     }));
   } else if (pathname === '/api/listings/get-all-listings') {
-    // Apply query filters if provided
-    const query = parsedUrl.query;
-    let filteredListings = [...sampleListings];
-    
-    if (query.category && query.category !== 'all') {
-      filteredListings = filteredListings.filter(item => item.category === query.category);
+    if (dbConnected && Listing) {
+      // Fetch real data from database
+      const query = parsedUrl.query;
+      let dbQuery = { status: 'active' };
+      
+      if (query.category && query.category !== 'all') {
+        dbQuery.category = query.category;
+      }
+      
+      Listing.find(dbQuery)
+        .limit(parseInt(query.limit) || 50)
+        .sort({ createdAt: -1 })
+        .then(listings => {
+          res.writeHead(200);
+          res.end(JSON.stringify({
+            success: true,
+            message: 'Real listings retrieved from database',
+            listings: listings,
+            total: listings.length,
+            timestamp: new Date().toISOString()
+          }));
+        })
+        .catch(error => {
+          console.log('Database query error:', error.message);
+          // Fallback to sample data
+          let filteredListings = [...sampleListings];
+          if (query.category && query.category !== 'all') {
+            filteredListings = filteredListings.filter(item => item.category === query.category);
+          }
+          if (query.limit) {
+            filteredListings = filteredListings.slice(0, parseInt(query.limit));
+          }
+          res.writeHead(200);
+          res.end(JSON.stringify({
+            success: true,
+            message: 'Sample listings (DB error fallback)',
+            listings: filteredListings,
+            total: filteredListings.length,
+            timestamp: new Date().toISOString()
+          }));
+        });
+    } else {
+      // Use sample data if no database connection
+      const query = parsedUrl.query;
+      let filteredListings = [...sampleListings];
+      
+      if (query.category && query.category !== 'all') {
+        filteredListings = filteredListings.filter(item => item.category === query.category);
+      }
+      
+      if (query.limit) {
+        filteredListings = filteredListings.slice(0, parseInt(query.limit));
+      }
+      
+      res.writeHead(200);
+      res.end(JSON.stringify({
+        success: true,
+        message: 'Sample listings (no database connection)',
+        listings: filteredListings,
+        total: filteredListings.length,
+        timestamp: new Date().toISOString()
+      }));
     }
-    
-    if (query.limit) {
-      filteredListings = filteredListings.slice(0, parseInt(query.limit));
-    }
-    
-    res.writeHead(200);
-    res.end(JSON.stringify({
-      success: true,
-      message: 'Sample listings retrieved',
-      listings: filteredListings,
-      total: filteredListings.length,
-      timestamp: new Date().toISOString()
-    }));
   } else if (pathname === '/api/listings/user-listings') {
     res.writeHead(200);
     res.end(JSON.stringify({
