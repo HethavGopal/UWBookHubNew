@@ -126,8 +126,9 @@ const getCorsOptions = () => {
     'https://uwbookhub.vercel.app',
     'https://uw-bookhub-new.vercel.app',
     'https://uwaterloomarketplace.vercel.app',
-    // Add your specific Vercel deployment URL
+    // Add your specific Vercel deployment URLs
     'https://uw-book-hub-4a2ipkl8d-hethavgopals-projects.vercel.app',
+    'https://uw-book-hub-6tgeyotnt-hethavgopals-projects.vercel.app',
     // Pattern for Vercel preview URLs
     /^https:\/\/uw-book-hub-[a-z0-9]+-hethavgopals-projects\.vercel\.app$/,
     // Pattern for any Vercel deployment under your account

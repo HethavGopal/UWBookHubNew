@@ -148,6 +148,7 @@ const server = http.createServer((req, res) => {
   const allowedOrigins = [
     'https://uwbookhub.vercel.app',
     'https://uw-book-hub-4a2ipkl8d-hethavgopals-projects.vercel.app',
+    'https://uw-book-hub-6tgeyotnt-hethavgopals-projects.vercel.app',
     'https://uw-bookhub-new.vercel.app',
     'http://localhost:3000',
     'http://localhost:5173'

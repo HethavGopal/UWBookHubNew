@@ -23,7 +23,7 @@ const Register = () => {
 
     const password = watch("password");
 
-    const {createUser, googleSignIn} = useAuth();
+    const {registerUser, googleSignIn} = useAuth();
     const onSubmit = async (data) => {
         if (!acceptTerms) {
             setMessage("Please accept the terms and conditions");
@@ -32,7 +32,7 @@ const Register = () => {
         setIsLoading(true);
         setMessage('');
         try {
-            await createUser(data.email, data.password);
+            await registerUser(data.email, data.password);
             alert("User created successfully");
             navigate('/');
         } catch (error) {
