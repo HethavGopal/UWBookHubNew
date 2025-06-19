@@ -277,7 +277,7 @@ const server = http.createServer((req, res) => {
             res.end(JSON.stringify({
               success: true,
               message: 'Single listing retrieved from database',
-              listings: listing,
+              listing: listing,
               timestamp: new Date().toISOString()
             }));
           } else {
@@ -297,7 +297,7 @@ const server = http.createServer((req, res) => {
           res.end(JSON.stringify({
             success: true,
             message: 'Sample listing (DB error fallback)',
-            listings: listing,
+            listing: listing,
             timestamp: new Date().toISOString()
           }));
         });
@@ -308,7 +308,7 @@ const server = http.createServer((req, res) => {
       res.end(JSON.stringify({
         success: true,
         message: 'Sample listing (no database)',
-        listings: listing,
+        listing: listing,
         timestamp: new Date().toISOString()
       }));
     }
