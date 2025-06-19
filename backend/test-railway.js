@@ -267,14 +267,51 @@ const server = http.createServer((req, res) => {
     }));
   } else if (pathname.startsWith('/api/listings/') && pathname !== '/api/listings/get-all-listings' && pathname !== '/api/listings/user-listings') {
     const listingId = pathname.split('/').pop();
-    const listing = sampleListings.find(item => item.id === listingId) || sampleListings[0];
-    res.writeHead(200);
-    res.end(JSON.stringify({
-      success: true,
-      message: 'Single listing retrieved',
-      listings: listing,
-      timestamp: new Date().toISOString()
-    }));
+    
+    if (dbConnected && Listing) {
+      // Fetch real listing from database
+      Listing.findById(listingId)
+        .then(listing => {
+          if (listing) {
+            res.writeHead(200);
+            res.end(JSON.stringify({
+              success: true,
+              message: 'Single listing retrieved from database',
+              listings: listing,
+              timestamp: new Date().toISOString()
+            }));
+          } else {
+            res.writeHead(404);
+            res.end(JSON.stringify({
+              success: false,
+              message: 'Listing not found',
+              timestamp: new Date().toISOString()
+            }));
+          }
+        })
+        .catch(error => {
+          console.log('Database query error for single listing:', error.message);
+          // Fallback to sample data
+          const listing = sampleListings.find(item => item.id === listingId) || sampleListings[0];
+          res.writeHead(200);
+          res.end(JSON.stringify({
+            success: true,
+            message: 'Sample listing (DB error fallback)',
+            listings: listing,
+            timestamp: new Date().toISOString()
+          }));
+        });
+    } else {
+      // Fallback to sample data if no database connection
+      const listing = sampleListings.find(item => item.id === listingId) || sampleListings[0];
+      res.writeHead(200);
+      res.end(JSON.stringify({
+        success: true,
+        message: 'Sample listing (no database)',
+        listings: listing,
+        timestamp: new Date().toISOString()
+      }));
+    }
   } else if (pathname === '/api/books') {
     const books = sampleListings.filter(item => item.category === 'textbooks');
     res.writeHead(200);
